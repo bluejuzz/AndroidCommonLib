@@ -1,7 +1,6 @@
 package com.company.commonlib
 
 import android.view.View
-import android.widget.Button
 import androidx.lifecycle.Lifecycle
 import com.company.commonlib.camerax.CameraXBarcodeAnalyzerActivity
 import com.company.commonlib.network.AismonoResponse
@@ -19,6 +18,7 @@ import com.company.commonlibrary.bean.RequestEntity
 import com.company.commonlibrary.retrofit.BaseCallback
 import com.company.commonlibrary.retrofit.BaseHttpModel
 import com.company.commonlibrary.util.NetworkChangeUtils
+import kotlinx.android.synthetic.main.activity_main.*
 
 /**
  * @author dinglaihong
@@ -68,7 +68,7 @@ class MainActivity : BaseActivity<IPresenter>() {
                         }
                     }]
         }
-        findViewById<Button>(R.id.test_camerax).setOnClickListener {
+        test_camerax.setOnClickListener {
             CameraXBarcodeAnalyzerActivity.starter(this)
         }
     }

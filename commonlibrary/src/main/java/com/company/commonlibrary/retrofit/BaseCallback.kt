@@ -43,7 +43,7 @@ abstract class BaseCallback<T> {
     /**
      * 请求成功
      *
-     * @param response 返回基类
+     * @param response 返回泛型类
      */
     abstract fun onSuccess(response: T)
 

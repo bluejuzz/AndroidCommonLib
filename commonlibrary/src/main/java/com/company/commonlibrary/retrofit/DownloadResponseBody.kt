@@ -43,12 +43,14 @@ class DownloadResponseBody(private val responseBody: ResponseBody, private val d
                 val bytesRead = super.read(sink, byteCount)
                 // read() returns the number of bytes read, or -1 if this source is exhausted.
                 if (responseBody.contentLength() > 0) {
-                    totalBytesRead += if (!bytesRead.equals(-1)) {
+                    totalBytesRead += if (bytesRead != -1L) {
                         bytesRead
                     } else 0
                     Log.e("download", "read: " + (totalBytesRead * 100 / responseBody.contentLength()).toInt())
-                    if (null != downloadListener) if (!bytesRead.equals(-1)) {
-                        downloadListener.onProgress((totalBytesRead * 100 / responseBody.contentLength()).toInt())
+                    downloadListener?.apply {
+                        if (bytesRead != -1L) {
+                            onProgress((totalBytesRead * 100 / responseBody.contentLength()).toInt())
+                        }
                     }
                 }
                 return bytesRead

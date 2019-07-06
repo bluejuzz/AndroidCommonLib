@@ -7,6 +7,8 @@ import com.google.gson.Gson
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import okhttp3.ResponseBody
+import org.reactivestreams.Subscriber
+import org.reactivestreams.Subscription
 import retrofit2.Response
 
 /**
@@ -15,10 +17,8 @@ import retrofit2.Response
  * @date 2019/05/06 14:16
  * @des
  */
-class ResponseObserver<T> internal constructor(private val mBaseCallback: BaseCallback<T>?) : Observer<Response<ResponseBody>> {
-
-    override fun onSubscribe(d: Disposable) {
-
+class ResponseSubscriber<T> internal constructor(private val mBaseCallback: BaseCallback<T>?) : Subscriber<Response<ResponseBody>> {
+    override fun onSubscribe(s: Subscription?) {
     }
 
     override fun onNext(response: Response<ResponseBody>) {

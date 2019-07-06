@@ -7,15 +7,13 @@ import com.blankj.utilcode.util.NetworkUtils
 import com.company.commonlibrary.BuildConfig
 import com.google.gson.Gson
 import com.uber.autodispose.AutoDisposeConverter
-import com.uber.autodispose.ObservableSubscribeProxy
+import com.uber.autodispose.FlowableSubscribeProxy
 
 import java.io.File
 import java.net.ConnectException
 import java.net.URLConnection
 
-import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -24,8 +22,9 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
+import org.reactivestreams.Subscriber
+import org.reactivestreams.Subscription
 import retrofit2.Response
-import java.io.InputStream
 
 
 /**
@@ -56,12 +55,12 @@ class BaseHttpModel private constructor() {
                 val requestBody = file.asRequestBody(judgeType(file.name))
                 val part = MultipartBody.Part.createFormData("file", file.name, requestBody)
                 RetrofitClient.getFileRetrofit(null)
-                        .create<RetrofitService>(RetrofitService::class.java)
+                        .create(RetrofitService::class.java)
                         .postFile(url, paramsBody, part)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .`as`<ObservableSubscribeProxy<Response<ResponseBody>>>(disposeConverter)
-                        .subscribe(ResponseObserver(callback))
+                        .`as`<FlowableSubscribeProxy<Response<ResponseBody>>>(disposeConverter)
+                        .subscribe(ResponseSubscriber(callback))
             }
         }
     }
@@ -83,12 +82,12 @@ class BaseHttpModel private constructor() {
                 onFinish()
             }
             else -> RetrofitClient.getRetrofit()
-                    .create<RetrofitService>(RetrofitService::class.java)
+                    .create(RetrofitService::class.java)
                     .postJson(url, requestBody)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .`as`<ObservableSubscribeProxy<Response<ResponseBody>>>(disposeConverter)
-                    .subscribe(ResponseObserver(callback))
+                    .`as`<FlowableSubscribeProxy<Response<ResponseBody>>>(disposeConverter)
+                    .subscribe(ResponseSubscriber(callback))
         }
 
     }
@@ -113,22 +112,22 @@ class BaseHttpModel private constructor() {
 
                 params?.let {
                     RetrofitClient.getRetrofit()
-                            .create<RetrofitService>(RetrofitService::class.java)
+                            .create(RetrofitService::class.java)
                             .getJson(url, it)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .`as`<ObservableSubscribeProxy<Response<ResponseBody>>>(disposeConverter)
-                            .subscribe(ResponseObserver(callback))
+                            .`as`<FlowableSubscribeProxy<Response<ResponseBody>>>(disposeConverter)
+                            .subscribe(ResponseSubscriber(callback))
                 }
 
                 params ?: let {
                     RetrofitClient.getRetrofit()
-                            .create<RetrofitService>(RetrofitService::class.java)
+                            .create(RetrofitService::class.java)
                             .getJson(url)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .`as`<ObservableSubscribeProxy<Response<ResponseBody>>>(disposeConverter)
-                            .subscribe(ResponseObserver(callback))
+                            .`as`<FlowableSubscribeProxy<Response<ResponseBody>>>(disposeConverter)
+                            .subscribe(ResponseSubscriber(callback))
                 }
             }
         }
@@ -149,15 +148,15 @@ class BaseHttpModel private constructor() {
                 downloadListener?.apply {
                     onStartDownload()
                     RetrofitClient.getFileRetrofit(this)
-                            .create<RetrofitService>(RetrofitService::class.java)
+                            .create(RetrofitService::class.java)
                             .downloadFile(downloadUrl)
-                            .map<InputStream> { t -> t.byteStream() }
+                            .map { t -> t.byteStream() }
                             .observeOn(Schedulers.computation())
                             .map { inputStream -> FileIOUtils.writeFileFromIS(saveFilepath, inputStream) }
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeOn(Schedulers.io())
-                            .safeSubscribe(object : Observer<Boolean> {
-                                override fun onSubscribe(d: Disposable) {
+                            .safeSubscribe(object : Subscriber<Boolean> {
+                                override fun onSubscribe(s: Subscription?) {
                                 }
 
                                 override fun onNext(isSuccessful: Boolean) = if (isSuccessful) {

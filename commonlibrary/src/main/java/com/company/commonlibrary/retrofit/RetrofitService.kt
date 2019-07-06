@@ -1,6 +1,7 @@
 package com.company.commonlibrary.retrofit
 
 
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -31,7 +32,7 @@ interface RetrofitService {
      * @return Observable
      */
     @POST
-    fun postJson(@Url url: String, @Body body: RequestBody): Observable<Response<ResponseBody>>
+    fun postJson(@Url url: String, @Body body: RequestBody): Flowable<Response<ResponseBody>>
 
     /**
      * 提交json数据
@@ -41,7 +42,7 @@ interface RetrofitService {
      * @return Observable
      */
     @GET
-    fun getJson(@Url url: String, @QueryMap queryMap: Map<String, Any>): Observable<Response<ResponseBody>>
+    fun getJson(@Url url: String, @QueryMap queryMap: Map<String, Any>): Flowable<Response<ResponseBody>>
 
     /**
      * 提交json数据
@@ -50,7 +51,7 @@ interface RetrofitService {
      * @return Observable
      */
     @GET
-    fun getJson(@Url url: String): Observable<Response<ResponseBody>>
+    fun getJson(@Url url: String): Flowable<Response<ResponseBody>>
 
 
     /**
@@ -63,7 +64,7 @@ interface RetrofitService {
      */
     @Multipart
     @POST
-    fun postFile(@Url url: String, @Part("parameter") description: RequestBody, @Part filePart: MultipartBody.Part): Observable<Response<ResponseBody>>
+    fun postFile(@Url url: String, @Part("parameter") description: RequestBody, @Part filePart: MultipartBody.Part): Flowable<Response<ResponseBody>>
 
     /**
      * 下载文件
@@ -73,6 +74,6 @@ interface RetrofitService {
      */
     @Streaming
     @GET
-    fun downloadFile(@Url downloadUrl: String): Observable<ResponseBody>
+    fun downloadFile(@Url downloadUrl: String): Flowable<ResponseBody>
 
 }
