@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".network.HttpRequestFragment">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/http_im_iresponse"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp_10"
+        android:text="实现IResponse接口"
+        android:textAllCaps="false" />
+
+    <TextView
+        android:id="@+id/http_im_iresponse_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dp_10"
+        android:text="@string/hello_blank_fragment" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/http_notim_iresponse"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp_10"
+        android:text="未实现IResponse接口"
+        android:textAllCaps="false" />
+
+    <TextView
+        android:id="@+id/http_notim_iresponse_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dp_10"
+        android:text="@string/hello_blank_fragment" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>
