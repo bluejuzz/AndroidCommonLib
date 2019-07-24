@@ -1,22 +1,16 @@
 package com.company.commonlib
 
+import android.annotation.SuppressLint
 import android.view.View
-import androidx.lifecycle.Lifecycle
-import com.company.commonlib.camerax.CameraXBarcodeAnalyzerActivity
-import com.company.commonlib.network.AismonoResponse
-import com.company.commonlib.network.BannerData
-import com.company.commonlib.network.MyCardData
-import com.company.commonlib.network.WanResponse
-
-import com.company.commonlibrary.base.BaseActivity
-import com.company.commonlibrary.base.BaseModel
-import com.company.commonlibrary.base.BasePresenter
-import com.company.commonlibrary.base.IModel
-import com.company.commonlibrary.base.IPresenter
-import com.company.commonlibrary.base.IView
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import com.blankj.utilcode.util.ToastUtils
+import com.company.commonlib.html.HtmlTestActivity
+import com.company.commonlib.network.*
+import com.company.commonlibrary.base.*
 import com.company.commonlibrary.bean.RequestEntity
-import com.company.commonlibrary.retrofit.BaseCallback
 import com.company.commonlibrary.retrofit.BaseHttpModel
+import com.company.commonlibrary.retrofit.CommonException
 import com.company.commonlibrary.util.NetworkChangeUtils
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -34,42 +28,46 @@ class MainActivity : BaseActivity<IPresenter>() {
     override val presenter: IPresenter
         get() = BasePresenter<IView, IModel>(this, BaseModel())
 
+    @SuppressLint("AutoDispose")
     override fun initView() {
 //        NetworkChangeUtils.registerListener(changeListener = NetworkChangeUtils.NetworkChangeListener())
         findViewById<View>(R.id.test_http).setOnClickListener {
             showLoading("加载中")
-            val requestBody =
-                    BaseHttpModel.instance.getRequestBody(RequestEntity<Map<String, Any>>(hashMapOf("phone" to 18279727279L)))
-            BaseHttpModel.instance.post(
-                    "https://http.aismono.net/mono-biz-app/educationclass/getCardList",
-                    requestBody,
-                    bindLifecycle(Lifecycle.Event.ON_DESTROY),
-                    object : BaseCallback<AismonoResponse<List<MyCardData.CardBean>>>() {
+            val requestBody = BaseHttpModel.instance.getRequestBody(RequestEntity<Map<String, Any>>(hashMapOf("phone" to 18279727279L)))
+            val post = BaseHttpModel.instance.post("https://http.aismono.net/mono-biz-app/educationclass/getCardList", requestBody)
+            post.observe(this, object : HttpObserver<AismonoResponse<List<MyCardData.CardBean>>>() {
+                override fun onSuccess(response: AismonoResponse<List<MyCardData.CardBean>>) {
+                    val aismonoResponse = response
+                }
 
-                        override fun onSuccess(response: AismonoResponse<List<MyCardData.CardBean>>) {
-                            val body = response.body
-                        }
+                override fun onFailed(e: CommonException) {
+                    super.onFailed(e)
+                }
 
-                        override fun onFinish() {
+                override fun onFinish() {
+                    hideLoading()
+                }
 
-                        }
-                    })
-            BaseHttpModel.instance["https://www.wanandroid.com/banner/json",
-                    null,
-                    bindLifecycle(Lifecycle.Event.ON_DESTROY),
-                    object : BaseCallback<WanResponse<List<BannerData>>>() {
+            })
 
-                        override fun onSuccess(response: WanResponse<List<BannerData>>) {
-                            val data = response.data
-                        }
+            val liveData = BaseHttpModel.instance.get("https://www.wanandroid.com/banner/json")
+            liveData.observe(this, object : HttpObserver<WanResponse<List<BannerData>>>() {
+                override fun onSuccess(response: WanResponse<List<BannerData>>) {
+                    val wanResponse = response
+                }
 
-                        override fun onFinish() {
+                override fun onFailed(e: CommonException) {
+                    super.onFailed(e)
+                }
 
-                        }
-                    }]
+                override fun onFinish() {
+                    hideLoading()
+                }
+
+            })
         }
         test_camerax.setOnClickListener {
-            CameraXBarcodeAnalyzerActivity.starter(this)
+            HtmlTestActivity.starter(this)
         }
     }
 
@@ -82,3 +80,8 @@ class MainActivity : BaseActivity<IPresenter>() {
         NetworkChangeUtils.unRegisterListener()
     }
 }
+
+private fun <T> LiveData<T>.observe(mainActivity: MainActivity, observer: Observer<AismonoResponse<List<MyCardData.CardBean>>>) {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+}
+

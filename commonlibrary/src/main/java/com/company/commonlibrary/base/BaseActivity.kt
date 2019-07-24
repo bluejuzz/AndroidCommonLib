@@ -1,5 +1,6 @@
 package com.company.commonlibrary.base
 
+import android.content.res.Resources
 import androidx.annotation.LayoutRes
 import androidx.lifecycle.Lifecycle
 
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
 
 import android.view.WindowManager
+import com.blankj.utilcode.util.ScreenUtils
 
 import com.company.commonlibrary.util.RxLifecycleUtils
 import com.lxj.xpopup.XPopup

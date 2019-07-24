@@ -6,17 +6,12 @@ package com.company.commonlibrary.bean
  * @date 2019/05/05 13:49
  * @des
  */
-class RequestEntity<T> {
+class RequestEntity<T>(body: T) {
     var token = ""
     var ver = "1.0"
     var sys = "android"
     var sysVer = "1.0"
     var channel = ""
-    var body: T? = null
+    var body: T? = body
 
-    constructor() {}
-
-    constructor(body: T) {
-        this.body = body
-    }
 }

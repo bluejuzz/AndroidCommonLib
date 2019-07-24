@@ -1,6 +1,8 @@
 package com.company.commonlibrary.retrofit
 
 
+import androidx.lifecycle.LiveData
+import com.company.commonlibrary.bean.ResponseExample1
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import okhttp3.MultipartBody
@@ -23,7 +25,7 @@ import retrofit2.http.Url
  * @des
  */
 
-interface RetrofitService {
+interface RetrofitAppService {
     /**
      * 提交json数据
      *
@@ -32,7 +34,7 @@ interface RetrofitService {
      * @return Observable
      */
     @POST
-    fun postJson(@Url url: String, @Body body: RequestBody): Flowable<Response<ResponseBody>>
+    fun post(@Url url: String, @Body body: RequestBody): LiveData<ApiResponse<Any>>
 
     /**
      * 提交json数据
@@ -42,16 +44,7 @@ interface RetrofitService {
      * @return Observable
      */
     @GET
-    fun getJson(@Url url: String, @QueryMap queryMap: Map<String, Any>): Flowable<Response<ResponseBody>>
-
-    /**
-     * 提交json数据
-     *
-     * @param url 请求地址
-     * @return Observable
-     */
-    @GET
-    fun getJson(@Url url: String): Flowable<Response<ResponseBody>>
+    fun get(@Url url: String, @QueryMap queryMap: @JvmSuppressWildcards Map<String, Any>): LiveData<ApiResponse<Any>>
 
 
     /**
@@ -64,7 +57,7 @@ interface RetrofitService {
      */
     @Multipart
     @POST
-    fun postFile(@Url url: String, @Part("parameter") description: RequestBody, @Part filePart: MultipartBody.Part): Flowable<Response<ResponseBody>>
+    fun postFile(@Url url: String, @Part("parameter") description: RequestBody, @Part filePart: MultipartBody.Part): LiveData<ApiResponse<Any>>
 
     /**
      * 下载文件
@@ -74,6 +67,6 @@ interface RetrofitService {
      */
     @Streaming
     @GET
-    fun downloadFile(@Url downloadUrl: String): Flowable<ResponseBody>
+    fun downloadFile(@Url downloadUrl: String): Observable<ResponseBody>
 
 }

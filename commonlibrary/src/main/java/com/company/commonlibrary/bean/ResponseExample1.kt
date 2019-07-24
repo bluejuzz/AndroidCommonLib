@@ -6,7 +6,7 @@ package com.company.commonlibrary.bean
  * @date 2019/05/18 17:03
  * @des
  */
-internal class ResponseExample1<T> : IResponse<T?> {
+class ResponseExample1<T> : IResponse<T?> {
     override val message: String = ""
     override val code: Int = 0
     override val body: T? = null

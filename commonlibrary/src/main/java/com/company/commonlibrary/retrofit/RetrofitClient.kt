@@ -65,20 +65,21 @@ object RetrofitClient {
             //  测试包打开日志
             val interceptor = HttpLoggingInterceptor()
             interceptor.level =
-                if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+                    if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
             val builder = OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .connectTimeout(TIME_OUT, TimeUnit.SECONDS)
-                .readTimeout(TIME_OUT, TimeUnit.SECONDS)
-                .writeTimeout(TIME_OUT, TimeUnit.SECONDS)
-                .retryOnConnectionFailure(true)
+                    .addInterceptor(interceptor)
+                    .connectTimeout(TIME_OUT, TimeUnit.SECONDS)
+                    .readTimeout(TIME_OUT, TimeUnit.SECONDS)
+                    .writeTimeout(TIME_OUT, TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(true)
 
             Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(builder.build())
-                .addConverterFactory(GsonConverterFactory.create(GsonFactory.getGson()))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
+                    .baseUrl(baseUrl)
+                    .client(builder.build())
+                    .addConverterFactory(GsonConverterFactory.create(GsonFactory.getGson()))
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .addCallAdapterFactory(LiveDataCallAdapterFactory())
+                    .build()
         }
         return retrofit
     }
@@ -88,11 +89,11 @@ object RetrofitClient {
         val fileRetrofit: Retrofit by lazy {
             RetrofitClient.downloadListener = downloadListener
             val builder = OkHttpClient.Builder()
-                .addInterceptor(DOWNLOAD_INTERCEPTOR)
-                .connectTimeout(FILE_TIME_OUT, TimeUnit.SECONDS)
-                .readTimeout(FILE_TIME_OUT, TimeUnit.SECONDS)
-                .writeTimeout(FILE_TIME_OUT, TimeUnit.SECONDS)
-                .retryOnConnectionFailure(true)
+                    .addInterceptor(DOWNLOAD_INTERCEPTOR)
+                    .connectTimeout(FILE_TIME_OUT, TimeUnit.SECONDS)
+                    .readTimeout(FILE_TIME_OUT, TimeUnit.SECONDS)
+                    .writeTimeout(FILE_TIME_OUT, TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(true)
             getRetrofit().newBuilder().client(builder.build()).build()
         }
         return fileRetrofit

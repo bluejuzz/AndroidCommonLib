@@ -21,7 +21,7 @@ interface IResponse<T> {
      *
      * @return 返回信息
      */
-    val message: String
+    val message: String?
 
     /**
      * 获得返回内容
