@@ -9,9 +9,7 @@ import com.company.commonlibrary.bean.IResponse
  * @des
  */
 data class AismonoResponse<T>(
-        override val code: Int = 0,
-        override val body: T? = null,
         val msg: String? = null,
-        override val message: String? = msg,
-        override val isSuccessful: Boolean = code == 8000
-) : IResponse<T?>
+        val code: Int = 0,
+        val body: T? = null
+)

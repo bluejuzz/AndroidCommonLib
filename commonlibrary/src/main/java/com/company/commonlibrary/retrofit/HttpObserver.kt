@@ -1,4 +1,4 @@
-package com.company.commonlib.network
+package com.company.commonlibrary.retrofit
 
 import androidx.lifecycle.Observer
 import com.blankj.utilcode.util.ToastUtils
@@ -17,42 +17,31 @@ import java.lang.reflect.Type
  */
 abstract class HttpObserver<T> : Observer<ApiResponse<Any>> {
     override fun onChanged(t: ApiResponse<Any>?) {
-        t?.apply {
-            when (this) {
-                is ApiSuccessResponse -> {
+        when (t) {
+            is ApiSuccessResponse -> t.let {
+                try {
                     val type = getType(0)
-                    val toJson = Gson().toJson(body)
+                    val toJson = Gson().toJson(it.body)
                     val response = Gson().fromJson<T>(toJson, type)
-                    if (type is IResponse<*>) {//实现了返回数据接口
-                        val httpResponse = response as IResponse<*>
-                        if (!httpResponse.isSuccessful) {
-                            onFailed(CommonException(httpResponse.code, Exception(httpResponse.message)))
-                            onFinish()
-                        } else {
-                            onSuccess(response)
-                            onFinish()
-                        }
-                    } else { //未实现返回数据接口 需要自己处理返回信息
-                        when (response) {
-                            null -> {
-                                onFailed(CommonException(-1, Exception()))
-                                onFinish()
-                            }
-                            else -> {
-                                onSuccess(response)
-                                onFinish()
-                            }
-                        }
+                    if (response != null) {
+                        onSuccess(response)
+                        onFinish()
+                    } else {
+                        onFailed(CommonException(-1, Exception()))
+                        onFinish()
                     }
-                }
-                is ApiEmptyResponse -> {
-                    onFailed(CommonException(0, Exception("")))
+                } catch (e: Exception) {
+                    onFailed(CommonException(-1, e))
                     onFinish()
                 }
-                is ApiErrorResponse -> {
-                    onFailed(CommonException(code = code, throwable = error))
-                    onFinish()
-                }
+            }
+            is ApiEmptyResponse -> {
+                onFailed(CommonException(0, Exception("")))
+                onFinish()
+            }
+            is ApiErrorResponse -> t.let {
+                onFailed(CommonException(code = it.code, throwable = it.error))
+                onFinish()
             }
         }
 
