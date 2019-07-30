@@ -70,10 +70,10 @@ dependencies {
     api 'androidx.multidex:multidex:2.0.1'
     api 'com.github.bumptech.glide:glide:4.9.0'
     api 'com.lxj:xpopup:1.7.4'
-    api 'com.google.android.material:material:1.1.0-alpha08'
+    api 'com.google.android.material:material:1.1.0-alpha09'
     api 'org.jetbrains:annotations:17.0.0'
     api 'androidx.core:core-ktx:1.2.0-alpha02'
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     api 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    api 'androidx.lifecycle:lifecycle-extensions:2.0.0'
 }

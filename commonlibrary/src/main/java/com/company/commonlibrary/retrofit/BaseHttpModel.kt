@@ -6,6 +6,7 @@ import com.blankj.utilcode.util.FileIOUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.NetworkUtils
 import com.company.commonlibrary.BuildConfig
+import com.company.commonlibrary.base.BaseViewModel
 import com.google.gson.Gson
 import io.reactivex.Observer
 
@@ -31,7 +32,7 @@ import org.reactivestreams.Subscription
  * @date 2018/08/13 13:52
  * @des
  */
-class BaseHttpModel private constructor() {
+class BaseHttpModel : BaseViewModel() {
 
     /**
      * 文件上传使用

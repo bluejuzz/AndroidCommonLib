@@ -1,6 +1,7 @@
 package com.company.commonlib
 
 import android.view.View
+import com.company.commonlib.camerax.CameraXBarcodeAnalyzerActivity
 import com.company.commonlib.contacts.ContactsTestActivity
 import com.company.commonlib.html.HtmlTestActivity
 import com.company.commonlib.network.AismonoResponse
@@ -20,7 +21,7 @@ import kotlinx.android.synthetic.main.activity_main.*
  * @date 2019/7/6
  * @des
  */
-class MainActivity : BaseActivity<BaseViewModel>() {
+class MainActivity : BaseActivity<BaseHttpModel>() {
 
     override val layoutId = R.layout.activity_main
 
@@ -28,31 +29,31 @@ class MainActivity : BaseActivity<BaseViewModel>() {
 //        NetworkChangeUtils.registerListener(changeListener = NetworkChangeUtils.NetworkChangeListener())
         findViewById<View>(R.id.test_http).setOnClickListener {
             showLoading("加载中")
-            val requestBody = BaseHttpModel.instance.getRequestBody(RequestEntity<Map<String, Any>>(hashMapOf("phones" to 18279727279L)))
-            val post = BaseHttpModel.instance.post("https://http.aismono.net/mono-biz-app/educationclass/getCardList", requestBody)
-            post.observe(this, object : HttpObserver<AismonoResponse<List<MyCardData.CardBean>>>() {
-                override fun onSuccess(response: AismonoResponse<List<MyCardData.CardBean>>) {
-                }
+            val requestBody = mViewModel.getRequestBody(RequestEntity<Map<String, Any>>(hashMapOf("phone" to 18279727279L)))
+            mViewModel.post("https://http.aismono.net/mono-biz-app/educationclass/getCardList", requestBody)
+                    .observe(this, object : HttpObserver<AismonoResponse<List<MyCardData.CardBean>>>() {
+                        override fun onSuccess(response: AismonoResponse<List<MyCardData.CardBean>>) {
+                        }
 
-                override fun onFinish() {
-                    hideLoading()
-                }
+                        override fun onFinish() {
+                            hideLoading()
+                        }
 
-            })
+                    })
 
-            val liveData = BaseHttpModel.instance.get("https://www.wanandroid.com/banner/json")
-            liveData.observe(this, object : HttpObserver<WanResponse<List<BannerData>>>() {
-                override fun onSuccess(response: WanResponse<List<BannerData>>) {
-                }
+            mViewModel.get("https://www.wanandroid.com/banner/json")
+                    .observe(this, object : HttpObserver<WanResponse<List<BannerData>>>() {
+                        override fun onSuccess(response: WanResponse<List<BannerData>>) {
+                        }
 
-                override fun onFinish() {
-                    hideLoading()
-                }
+                        override fun onFinish() {
+                            hideLoading()
+                        }
 
-            })
+                    })
         }
         test_camerax.setOnClickListener {
-            HtmlTestActivity.starter(this)
+            CameraXBarcodeAnalyzerActivity.starter(this)
         }
         test_contacts.setOnClickListener {
             ContactsTestActivity.starter(this)
