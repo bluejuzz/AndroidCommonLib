@@ -1,17 +1,11 @@
 package com.company.commonlib.network
 
 
-import androidx.fragment.app.Fragment
-
 import android.view.View
+import androidx.fragment.app.Fragment
 import com.company.commonlib.R
-
 import com.company.commonlibrary.base.BaseFragment
-import com.company.commonlibrary.base.BaseModel
-import com.company.commonlibrary.base.BasePresenter
-import com.company.commonlibrary.base.IModel
-import com.company.commonlibrary.base.IPresenter
-import com.company.commonlibrary.base.IView
+import com.company.commonlibrary.base.BaseViewModel
 
 
 /**
@@ -19,13 +13,11 @@ import com.company.commonlibrary.base.IView
  * Use the [HttpRequestFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HttpRequestFragment : BaseFragment<IPresenter>() {
+class HttpRequestFragment : BaseFragment<BaseViewModel>() {
 
     override val layoutRes: Int
         get() = R.layout.fragment_http_request
 
-    override val presenter: IPresenter
-        get() = BasePresenter<IView, IModel>(this, BaseModel())
 
     override fun initView(view: View) {
 

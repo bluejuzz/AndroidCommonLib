@@ -1,8 +1,7 @@
 package com.company.commonlib
 
 import android.view.View
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
+import com.company.commonlib.contacts.ContactsTestActivity
 import com.company.commonlib.html.HtmlTestActivity
 import com.company.commonlib.network.AismonoResponse
 import com.company.commonlib.network.BannerData
@@ -21,19 +20,15 @@ import kotlinx.android.synthetic.main.activity_main.*
  * @date 2019/7/6
  * @des
  */
-class MainActivity : BaseActivity<IPresenter>() {
+class MainActivity : BaseActivity<BaseViewModel>() {
 
-    override val layoutId: Int
-        get() = R.layout.activity_main
-
-    override val presenter: IPresenter
-        get() = BasePresenter<IView, IModel>(this, BaseModel())
+    override val layoutId = R.layout.activity_main
 
     override fun initView() {
 //        NetworkChangeUtils.registerListener(changeListener = NetworkChangeUtils.NetworkChangeListener())
         findViewById<View>(R.id.test_http).setOnClickListener {
             showLoading("加载中")
-            val requestBody = BaseHttpModel.instance.getRequestBody(RequestEntity<Map<String, Any>>(hashMapOf("phone" to 18279727279L)))
+            val requestBody = BaseHttpModel.instance.getRequestBody(RequestEntity<Map<String, Any>>(hashMapOf("phones" to 18279727279L)))
             val post = BaseHttpModel.instance.post("https://http.aismono.net/mono-biz-app/educationclass/getCardList", requestBody)
             post.observe(this, object : HttpObserver<AismonoResponse<List<MyCardData.CardBean>>>() {
                 override fun onSuccess(response: AismonoResponse<List<MyCardData.CardBean>>) {
@@ -58,6 +53,9 @@ class MainActivity : BaseActivity<IPresenter>() {
         }
         test_camerax.setOnClickListener {
             HtmlTestActivity.starter(this)
+        }
+        test_contacts.setOnClickListener {
+            ContactsTestActivity.starter(this)
         }
     }
 

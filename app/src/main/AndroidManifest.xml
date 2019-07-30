@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
 
     <application
         android:name=".MainApplication"
@@ -18,7 +20,8 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:name">
-        <activity android:name=".html.HtmlTestActivity"></activity>
+        <activity android:name=".contacts.ContactsTestActivity" />
+        <activity android:name=".html.HtmlTestActivity" />
         <activity android:name=".camerax.CameraXBarcodeAnalyzerActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

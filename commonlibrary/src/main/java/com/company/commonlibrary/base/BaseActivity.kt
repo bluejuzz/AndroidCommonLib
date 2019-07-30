@@ -1,32 +1,24 @@
 package com.company.commonlibrary.base
 
-import android.content.res.Resources
-import androidx.annotation.LayoutRes
-import androidx.lifecycle.Lifecycle
-
 import android.os.Build
 import android.os.Bundle
-
-import androidx.annotation.CallSuper
+import android.view.WindowManager
+import androidx.annotation.LayoutRes
 import androidx.annotation.MainThread
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LifecycleOwner
-
-import android.view.WindowManager
-import com.blankj.utilcode.util.ScreenUtils
-
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProviders
 import com.company.commonlibrary.util.RxLifecycleUtils
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
 import com.uber.autodispose.AutoDisposeConverter
 import com.uber.autodispose.ObservableSubscribeProxy
-
-import java.util.concurrent.TimeUnit
-
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import java.lang.reflect.ParameterizedType
+import java.util.concurrent.TimeUnit
 
 /**
  * @author dlh
@@ -35,11 +27,11 @@ import io.reactivex.schedulers.Schedulers
  * @des
  */
 
-abstract class BaseActivity<P : IPresenter> : AppCompatActivity(), IActivity, LifecycleOwner {
-    private var mPresenter: P? = null
+abstract class BaseActivity<M : BaseViewModel> : AppCompatActivity(), IActivity {
+    protected lateinit var mViewModel: M
     private var mPopupView: BasePopupView? = null
     private var mSubscribe: Disposable? = null
-
+    private var viewModelClass: Class<M>? = null
     /**
      * 获取布局ID
      *
@@ -49,13 +41,6 @@ abstract class BaseActivity<P : IPresenter> : AppCompatActivity(), IActivity, Li
     @get:LayoutRes
     protected abstract val layoutId: Int
 
-    /**
-     * 获取 presenter
-     *
-     * @return presenter
-     */
-    protected abstract val presenter: P
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -63,8 +48,10 @@ abstract class BaseActivity<P : IPresenter> : AppCompatActivity(), IActivity, Li
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         }
         setContentView(layoutId)
-        mPresenter = presenter
-        initLifecycleObserver(lifecycle)
+        viewModelClass = getT1(this, 0)
+        if (viewModelClass != null) {
+            mViewModel = ViewModelProviders.of(this).get(viewModelClass!!)
+        }
         initView()
         initData()
     }
@@ -73,14 +60,6 @@ abstract class BaseActivity<P : IPresenter> : AppCompatActivity(), IActivity, Li
         return RxLifecycleUtils.bindLifecycle(this, untilEvent ?: Lifecycle.Event.ON_DESTROY)
     }
 
-    @CallSuper
-    @MainThread
-    protected fun initLifecycleObserver(lifecycle: Lifecycle) {
-        if (mPresenter != null) {
-            mPresenter!!.setLifecycleOwner(this)
-            lifecycle.addObserver(mPresenter!!)
-        }
-    }
 
     /**
      * 初始化布局
@@ -125,6 +104,16 @@ abstract class BaseActivity<P : IPresenter> : AppCompatActivity(), IActivity, Li
         if (mPopupView != null && mPopupView!!.isShow) {
             mPopupView!!.dismiss()
         }
+    }
+
+    private fun getT1(o: Any, i: Int): Class<M>? {
+        try {
+            val genType = o.javaClass.genericSuperclass
+            val params = (genType as ParameterizedType).actualTypeArguments
+            return params[i] as Class<M>
+        } catch (e: ClassCastException) {
+        }
+        return null
     }
 
     companion object {

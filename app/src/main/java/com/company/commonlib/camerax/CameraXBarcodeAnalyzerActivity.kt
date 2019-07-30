@@ -3,8 +3,6 @@ package com.company.commonlib.camerax
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.DisplayMetrics
@@ -15,7 +13,8 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageAnalysisConfig
 import androidx.camera.core.PreviewConfig
 import com.company.commonlib.R
-import com.company.commonlibrary.base.*
+import com.company.commonlibrary.base.BaseActivity
+import com.company.commonlibrary.base.BaseViewModel
 import com.google.zxing.Result
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_camera_x.*
@@ -36,11 +35,8 @@ const val FLAGS_FULLSCREEN =
 
 const val IMMERSIVE_FLAG_TIMEOUT = 500L
 
-class CameraXBarcodeAnalyzerActivity : BaseActivity<IPresenter>(), ScanQRCodeCallback {
-    override val layoutId: Int
-        get() = R.layout.activity_camera_x
-    override val presenter: IPresenter
-        get() = BasePresenter<IView, IModel>(this, BaseModel())
+class CameraXBarcodeAnalyzerActivity : BaseActivity<BaseViewModel>(), ScanQRCodeCallback {
+    override val layoutId = R.layout.activity_camera_x
 
     @SuppressLint("AutoDispose", "CheckResult")
     override fun initView() {

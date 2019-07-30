@@ -75,4 +75,5 @@ dependencies {
     api 'androidx.core:core-ktx:1.2.0-alpha02'
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     api 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
 }

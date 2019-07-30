@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProviders
 
 import com.company.commonlibrary.util.RxLifecycleUtils
 import com.lxj.xpopup.XPopup
@@ -24,6 +25,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import java.lang.reflect.ParameterizedType
 
 /**
  * @author dlh
@@ -32,16 +34,16 @@ import io.reactivex.schedulers.Schedulers
  * @des
  */
 
-abstract class BaseFragment<P : IPresenter> : Fragment(), IFragment {
+abstract class BaseFragment<M : BaseViewModel> : Fragment(), IFragment {
     protected var mRootView: View? = null
 
-    protected var mPresenter: P? = null
+    protected lateinit var mViewModel: M
     private var mPopupView: BasePopupView? = null
     private var mSubscribe: Disposable? = null
+    private var viewModelClass: Class<M>? = null
 
     protected abstract val layoutRes: Int
 
-    protected abstract val presenter: P
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mRootView = LayoutInflater.from(context).inflate(layoutRes, container, false)
@@ -50,8 +52,10 @@ abstract class BaseFragment<P : IPresenter> : Fragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initLifecycleObserver(lifecycle)
-        mPresenter = presenter
+        viewModelClass = getT1(this, 0)
+        if (viewModelClass != null) {
+            mViewModel = ViewModelProviders.of(this).get(viewModelClass!!)
+        }
         initView(view)
         initData()
     }
@@ -65,14 +69,6 @@ abstract class BaseFragment<P : IPresenter> : Fragment(), IFragment {
         return RxLifecycleUtils.bindLifecycle(this, untilEvent ?: Lifecycle.Event.ON_DESTROY)
     }
 
-    @CallSuper
-    @MainThread
-    protected fun initLifecycleObserver(lifecycle: Lifecycle) {
-        if (mPresenter != null) {
-            mPresenter!!.setLifecycleOwner(this)
-            lifecycle.addObserver(mPresenter!!)
-        }
-    }
 
     protected abstract fun initView(view: View)
 
@@ -114,7 +110,17 @@ abstract class BaseFragment<P : IPresenter> : Fragment(), IFragment {
     override fun showMessage(msg: String) {
 
     }
+    private fun getT1(o: Any, i: Int): Class<M>? {
+        try {
+            val genType = o.javaClass.genericSuperclass
+            val params = (genType as ParameterizedType).actualTypeArguments
+            return params[i] as Class<M>
+        } catch (e: ClassCastException) {
+        }
 
+        return null
+
+    }
     companion object {
 
         private const val TIMEOUT_TIME = 10
