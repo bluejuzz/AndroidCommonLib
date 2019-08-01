@@ -1,14 +1,9 @@
 package com.company.commonlib.contacts
 
 import androidx.lifecycle.MutableLiveData
-import com.blankj.utilcode.util.FileIOUtils
-import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.Utils
 import com.company.commonlibrary.base.BaseViewModel
 import com.google.gson.Gson
-import com.google.gson.internal.bind.JsonTreeReader
-import java.io.File
-import java.io.Reader
 
 /**
  * @author dinglaihong
@@ -29,9 +24,7 @@ class ContactsModel : BaseViewModel() {
     }
 
     fun writeContacts(): MutableLiveData<Boolean> {
-        if (!::writeContactsComplete.isInitialized) {
-            writeContactsComplete = MutableLiveData()
-        }
+        if (!::writeContactsComplete.isInitialized) writeContactsComplete = MutableLiveData()
         val b = ContactBackupUtil(Utils.getApp()).writeContacts(Gson().fromJson("{\n" +
                 "    \"name\": \"\",\n" +
                 "    \"contacts\": [\n" +
@@ -487,7 +480,7 @@ class ContactsModel : BaseViewModel() {
                 "    \"identifier\": \"51DF4D5D-C00E-4386-9DB7-A702E1D18FF1\"\n" +
                 "}", ContactBackupResponse::class.java))
         writeContactsComplete.value = b
-        return writeContactsComplete
+        return this.writeContactsComplete
     }
 
     private fun loadUsers() {
@@ -497,17 +490,12 @@ class ContactsModel : BaseViewModel() {
             val phoneNumbers: List<ContactBackupResponse.ContactsBean.PhoneNumbersBean>? = contact.phoneNumbers
             val name: String = contact.givenName.toString()
             var number = ""
-            when (phoneNumbers.isNullOrEmpty()) {
-                true -> {
-                }
-                false -> {
-                    val phoneNumbersBean: ContactBackupResponse.ContactsBean.PhoneNumbersBean? = phoneNumbers[0]
+            if (!with(phoneNumbers) { isNullOrEmpty() }) {
+                val phoneNumbersBean: ContactBackupResponse.ContactsBean.PhoneNumbersBean? = contact.phoneNumbers?.get(0)
 
-                    phoneNumbersBean?.let {
-                        number = it.phoneNumber?.number.toString()
-                    }
+                phoneNumbersBean?.let {
+                    number = it.phoneNumber?.number.toString()
                 }
-
             }
             val contactBean = ContactBean(name, number)
             phones.add(contactBean)

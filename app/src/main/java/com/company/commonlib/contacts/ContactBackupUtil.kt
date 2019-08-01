@@ -4,10 +4,9 @@ import android.content.ContentProviderOperation
 import android.content.Context
 import android.net.Uri
 import android.provider.ContactsContract
+import android.provider.ContactsContract.CommonDataKinds.*
 import android.util.Log
 import java.util.*
-import kotlin.concurrent.thread
-import android.provider.ContactsContract.CommonDataKinds.*
 
 
 /**
@@ -43,7 +42,7 @@ class ContactBackupUtil(private val context: Context) {
             return phoneDtos
         }
     /**
-     *
+     * @throws Exception
      */
     val readContacts: ContactBackupResponse?
         get() {
