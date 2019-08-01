@@ -101,7 +101,7 @@ abstract class BaseActivity<M : BaseViewModel> : AppCompatActivity(), IActivity 
             mSubscribe!!.dispose()
             mSubscribe = null
         }
-        if (mPopupView != null && mPopupView!!.isShow) {
+        if (mPopupView != null) {
             mPopupView!!.dismiss()
         }
     }

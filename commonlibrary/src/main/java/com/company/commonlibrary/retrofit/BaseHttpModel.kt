@@ -158,15 +158,5 @@ class BaseHttpModel : BaseViewModel() {
     companion object {
         private val TYPE_FILE = "multipart/form-data".toMediaTypeOrNull()
         private val TYPE_JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
-
-        private var sInstance: BaseHttpModel? = null
-
-        val instance: BaseHttpModel
-            @Synchronized get() {
-                if (sInstance == null) {
-                    sInstance = BaseHttpModel()
-                }
-                return sInstance as BaseHttpModel
-            }
     }
 }
