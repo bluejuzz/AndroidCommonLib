@@ -58,7 +58,10 @@ class ContactsModel : BaseViewModel() {
             val response: ContactBackupResponse? = deferred.await()
             response?.contacts?.forEach { contact ->
                 val phoneNumbers: List<ContactBackupResponse.ContactsBean.PhoneNumbersBean>? = contact.phoneNumbers
-                val name: String = contact.givenName.toString()
+                val name: String = ((if (contact.displayName.isNullOrEmpty()) "（无姓名）" else {
+                    contact.displayName
+                }) as String)
+                val avatar: String? = contact.imageData
                 var number = ""
                 if (!with(phoneNumbers) { isNullOrEmpty() }) {
                     val phoneNumbersBean: ContactBackupResponse.ContactsBean.PhoneNumbersBean? = contact.phoneNumbers?.get(0)
@@ -67,7 +70,11 @@ class ContactsModel : BaseViewModel() {
                         number = it.phoneNumber?.number.toString()
                     }
                 }
-                val contactBean = ContactBean(name, number)
+                val contactBean: ContactBean = when {
+                    name.isEmpty() -> ContactBean(avatar = avatar, telPhone = number)
+                    number.isEmpty() -> ContactBean(avatar = avatar, name = name)
+                    else -> ContactBean(avatar = avatar, name = name, telPhone = number)
+                }
                 phones.add(contactBean)
             }
             contacts.postValue(phones)

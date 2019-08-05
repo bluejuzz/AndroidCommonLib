@@ -1,6 +1,6 @@
 package com.company.commonlib.contacts
 
-import android.provider.ContactsContract
+import android.provider.ContactsContract.CommonDataKinds.*
 
 /**
  * @author dinglaihong
@@ -56,9 +56,9 @@ class ContactsConstants {
         const val IM_AIM: String = "AIM"
         const val IM_GOOGLE_TALK: String = "GOOGLE_TALK"
         const val IM_CUSTOM: String = "Custom"
-
+        const val LABEL_DEFULT = "自定义"
         /**
-         * 获取地址类型
+         * 获取显示标签
          */
         fun getDisplayLabel(label: String?, displayLabel: String?): String? {
             return when (label) {
@@ -85,7 +85,6 @@ class ContactsConstants {
                 PAGER -> "传呼机"
                 HOMEPAGE -> "主页"
                 ANNIVERSARY -> "纪念日"
-                CUSTOM -> displayLabel
                 I_CLOUD -> "iCloud"
                 IPHONE -> "iPhone"
                 IM_QQ -> "QQ"
@@ -97,7 +96,7 @@ class ContactsConstants {
                 IM_YAHOO -> "Yahoo"
                 IM_AIM -> "AIM"
                 IM_GOOGLE_TALK -> "GOOGLE_TALK"
-                IM_CUSTOM -> displayLabel
+                CUSTOM, IM_CUSTOM -> displayLabel
                 else -> displayLabel
             }
         }
@@ -107,39 +106,43 @@ class ContactsConstants {
          */
         fun getRelationType(label: String?): Int {
             return when (label) {
-                MOTHER -> ContactsContract.CommonDataKinds.Relation.TYPE_MOTHER
-                FATHER -> ContactsContract.CommonDataKinds.Relation.TYPE_FATHER
-                PARENT -> ContactsContract.CommonDataKinds.Relation.TYPE_PARENT
-                BROTHER -> ContactsContract.CommonDataKinds.Relation.TYPE_BROTHER
-                SISTER -> ContactsContract.CommonDataKinds.Relation.TYPE_SISTER
-                SON -> ContactsContract.CommonDataKinds.Relation.TYPE_CUSTOM
-                DAUGHTER -> ContactsContract.CommonDataKinds.Relation.TYPE_CUSTOM
-                CHILD -> ContactsContract.CommonDataKinds.Relation.TYPE_CHILD
-                FRIEND -> ContactsContract.CommonDataKinds.Relation.TYPE_FRIEND
-                SPOUSE -> ContactsContract.CommonDataKinds.Relation.TYPE_SPOUSE
-                PARTNER -> ContactsContract.CommonDataKinds.Relation.TYPE_PARTNER
-                ASSISTANT -> ContactsContract.CommonDataKinds.Relation.TYPE_ASSISTANT
-                MANAGER -> ContactsContract.CommonDataKinds.Relation.TYPE_MANAGER
-                OTHER -> ContactsContract.CommonDataKinds.Relation.TYPE_CUSTOM
-                else -> ContactsContract.CommonDataKinds.Relation.TYPE_CUSTOM
+                MOTHER -> Relation.TYPE_MOTHER
+                FATHER -> Relation.TYPE_FATHER
+                PARENT -> Relation.TYPE_PARENT
+                BROTHER -> Relation.TYPE_BROTHER
+                SISTER -> Relation.TYPE_SISTER
+                SON -> Relation.TYPE_CUSTOM
+                DAUGHTER -> Relation.TYPE_CUSTOM
+                CHILD -> Relation.TYPE_CHILD
+                FRIEND -> Relation.TYPE_FRIEND
+                SPOUSE -> Relation.TYPE_SPOUSE
+                PARTNER -> Relation.TYPE_PARTNER
+                ASSISTANT -> Relation.TYPE_ASSISTANT
+                MANAGER -> Relation.TYPE_MANAGER
+                OTHER -> Relation.TYPE_CUSTOM
+                else -> Relation.TYPE_CUSTOM
             }
         }
 
+
+        /**
+         * 获取关系标签
+         */
         fun getRelationLabel(type: Int): String {
             return when (type) {
-                ContactsContract.CommonDataKinds.Relation.TYPE_MOTHER -> MOTHER
-                ContactsContract.CommonDataKinds.Relation.TYPE_FATHER -> FATHER
-                ContactsContract.CommonDataKinds.Relation.TYPE_PARENT -> PARENT
-                ContactsContract.CommonDataKinds.Relation.TYPE_BROTHER -> BROTHER
-                ContactsContract.CommonDataKinds.Relation.TYPE_SISTER -> SISTER
-                ContactsContract.CommonDataKinds.Relation.TYPE_CUSTOM -> MOTHER
-                ContactsContract.CommonDataKinds.Relation.TYPE_CHILD -> CHILD
-                ContactsContract.CommonDataKinds.Relation.TYPE_FRIEND -> FRIEND
-                ContactsContract.CommonDataKinds.Relation.TYPE_SPOUSE -> SPOUSE
-                ContactsContract.CommonDataKinds.Relation.TYPE_PARTNER -> PARTNER
-                ContactsContract.CommonDataKinds.Relation.TYPE_ASSISTANT -> ASSISTANT
-                ContactsContract.CommonDataKinds.Relation.TYPE_MANAGER -> MANAGER
-                else -> "自定义"
+                Relation.TYPE_MOTHER -> MOTHER
+                Relation.TYPE_FATHER -> FATHER
+                Relation.TYPE_PARENT -> PARENT
+                Relation.TYPE_BROTHER -> BROTHER
+                Relation.TYPE_SISTER -> SISTER
+                Relation.TYPE_CUSTOM -> MOTHER
+                Relation.TYPE_CHILD -> CHILD
+                Relation.TYPE_FRIEND -> FRIEND
+                Relation.TYPE_SPOUSE -> SPOUSE
+                Relation.TYPE_PARTNER -> PARTNER
+                Relation.TYPE_ASSISTANT -> ASSISTANT
+                Relation.TYPE_MANAGER -> MANAGER
+                else -> LABEL_DEFULT
             }
         }
 
@@ -149,40 +152,40 @@ class ContactsConstants {
          */
         fun getPhoneType(label: String?): Int {
             return when (label) {
-                HOME -> ContactsContract.CommonDataKinds.Phone.TYPE_HOME
-                WORK -> ContactsContract.CommonDataKinds.Phone.TYPE_WORK
-                ASSISTANT -> ContactsContract.CommonDataKinds.Phone.TYPE_ASSISTANT
-                HOME_FAX -> ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME
-                WORK_FAX -> ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK
-                OTHER_FAX -> ContactsContract.CommonDataKinds.Phone.TYPE_OTHER_FAX
-                MAIN -> ContactsContract.CommonDataKinds.Phone.TYPE_MAIN
-                MOBILE -> ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE
-                PAGER -> ContactsContract.CommonDataKinds.Phone.TYPE_PAGER
-                WORK_PAGER -> ContactsContract.CommonDataKinds.Phone.TYPE_WORK_PAGER
-                OTHER -> ContactsContract.CommonDataKinds.Phone.TYPE_OTHER
-                CUSTOM -> ContactsContract.CommonDataKinds.Phone.TYPE_CUSTOM
-                else -> ContactsContract.CommonDataKinds.Phone.TYPE_CUSTOM
+                HOME -> Phone.TYPE_HOME
+                WORK -> Phone.TYPE_WORK
+                ASSISTANT -> Phone.TYPE_ASSISTANT
+                HOME_FAX -> Phone.TYPE_FAX_HOME
+                WORK_FAX -> Phone.TYPE_FAX_WORK
+                OTHER_FAX -> Phone.TYPE_OTHER_FAX
+                MAIN -> Phone.TYPE_MAIN
+                MOBILE -> Phone.TYPE_MOBILE
+                PAGER -> Phone.TYPE_PAGER
+                WORK_PAGER -> Phone.TYPE_WORK_PAGER
+                OTHER -> Phone.TYPE_OTHER
+                CUSTOM -> Phone.TYPE_CUSTOM
+                else -> Phone.TYPE_CUSTOM
             }
         }
 
         /**
-         * 获取电话类型
+         * 获取电话标签
          */
         fun getPhoneLabel(type: Int): String? {
             return when (type) {
-                ContactsContract.CommonDataKinds.Phone.TYPE_HOME -> HOME
-                ContactsContract.CommonDataKinds.Phone.TYPE_WORK -> WORK
-                ContactsContract.CommonDataKinds.Phone.TYPE_ASSISTANT -> ASSISTANT
-                ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME -> HOME_FAX
-                ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK -> WORK_FAX
-                ContactsContract.CommonDataKinds.Phone.TYPE_OTHER_FAX -> OTHER_FAX
-                ContactsContract.CommonDataKinds.Phone.TYPE_MAIN -> MAIN
-                ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE -> MOBILE
-                ContactsContract.CommonDataKinds.Phone.TYPE_PAGER -> PAGER
-                ContactsContract.CommonDataKinds.Phone.TYPE_WORK_PAGER -> WORK_PAGER
-                ContactsContract.CommonDataKinds.Phone.TYPE_OTHER -> OTHER
-                ContactsContract.CommonDataKinds.Phone.TYPE_CUSTOM -> null
-                else -> null
+                Phone.TYPE_HOME -> HOME
+                Phone.TYPE_WORK -> WORK
+                Phone.TYPE_ASSISTANT -> ASSISTANT
+                Phone.TYPE_FAX_HOME -> HOME_FAX
+                Phone.TYPE_FAX_WORK -> WORK_FAX
+                Phone.TYPE_OTHER_FAX -> OTHER_FAX
+                Phone.TYPE_MAIN -> MAIN
+                Phone.TYPE_MOBILE -> MOBILE
+                Phone.TYPE_PAGER -> PAGER
+                Phone.TYPE_WORK_PAGER -> WORK_PAGER
+                Phone.TYPE_OTHER -> OTHER
+                Phone.TYPE_CUSTOM -> LABEL_DEFULT
+                else -> LABEL_DEFULT
             }
         }
 
@@ -192,33 +195,36 @@ class ContactsConstants {
          */
         fun getImProtocol(label: String?): Int {
             return when (label) {
-                IM_QQ -> ContactsContract.CommonDataKinds.Im.PROTOCOL_QQ
-                IM_SKYPE -> ContactsContract.CommonDataKinds.Im.PROTOCOL_SKYPE
-                IM_CUSTOM -> ContactsContract.CommonDataKinds.Im.PROTOCOL_CUSTOM
-                IM_GOOGLE_TALK -> ContactsContract.CommonDataKinds.Im.PROTOCOL_GOOGLE_TALK
-                IM_ICQ -> ContactsContract.CommonDataKinds.Im.PROTOCOL_ICQ
-                IM_JABBER -> ContactsContract.CommonDataKinds.Im.PROTOCOL_JABBER
-                IM_MSN -> ContactsContract.CommonDataKinds.Im.PROTOCOL_MSN
-                IM_NET_MEETING -> ContactsContract.CommonDataKinds.Im.PROTOCOL_NETMEETING
-                IM_YAHOO -> ContactsContract.CommonDataKinds.Im.PROTOCOL_YAHOO
-                IM_AIM -> ContactsContract.CommonDataKinds.Im.PROTOCOL_AIM
-                else -> ContactsContract.CommonDataKinds.Im.PROTOCOL_CUSTOM
+                IM_QQ -> Im.PROTOCOL_QQ
+                IM_SKYPE -> Im.PROTOCOL_SKYPE
+                IM_CUSTOM -> Im.PROTOCOL_CUSTOM
+                IM_GOOGLE_TALK -> Im.PROTOCOL_GOOGLE_TALK
+                IM_ICQ -> Im.PROTOCOL_ICQ
+                IM_JABBER -> Im.PROTOCOL_JABBER
+                IM_MSN -> Im.PROTOCOL_MSN
+                IM_NET_MEETING -> Im.PROTOCOL_NETMEETING
+                IM_YAHOO -> Im.PROTOCOL_YAHOO
+                IM_AIM -> Im.PROTOCOL_AIM
+                else -> Im.PROTOCOL_CUSTOM
             }
         }
 
+        /**
+         * 获取im标签
+         */
         fun getImLabel(type: Int): String? {
             return when (type) {
-                ContactsContract.CommonDataKinds.Im.PROTOCOL_QQ -> IM_QQ
-                ContactsContract.CommonDataKinds.Im.PROTOCOL_SKYPE -> IM_SKYPE
-                ContactsContract.CommonDataKinds.Im.PROTOCOL_CUSTOM -> IM_CUSTOM
-                ContactsContract.CommonDataKinds.Im.PROTOCOL_GOOGLE_TALK -> IM_GOOGLE_TALK
-                ContactsContract.CommonDataKinds.Im.PROTOCOL_ICQ -> IM_ICQ
-                ContactsContract.CommonDataKinds.Im.PROTOCOL_JABBER -> IM_JABBER
-                ContactsContract.CommonDataKinds.Im.PROTOCOL_MSN -> IM_MSN
-                ContactsContract.CommonDataKinds.Im.PROTOCOL_NETMEETING -> IM_NET_MEETING
-                ContactsContract.CommonDataKinds.Im.PROTOCOL_YAHOO -> IM_YAHOO
-                ContactsContract.CommonDataKinds.Im.PROTOCOL_AIM -> IM_AIM
-                else -> "自定义"
+                Im.PROTOCOL_QQ -> IM_QQ
+                Im.PROTOCOL_SKYPE -> IM_SKYPE
+                Im.PROTOCOL_CUSTOM -> IM_CUSTOM
+                Im.PROTOCOL_GOOGLE_TALK -> IM_GOOGLE_TALK
+                Im.PROTOCOL_ICQ -> IM_ICQ
+                Im.PROTOCOL_JABBER -> IM_JABBER
+                Im.PROTOCOL_MSN -> IM_MSN
+                Im.PROTOCOL_NETMEETING -> IM_NET_MEETING
+                Im.PROTOCOL_YAHOO -> IM_YAHOO
+                Im.PROTOCOL_AIM -> IM_AIM
+                else -> LABEL_DEFULT
             }
         }
 
@@ -228,21 +234,24 @@ class ContactsConstants {
          */
         fun getPostalAddresseType(label: String?): Int {
             return when (label) {
-                HOME -> ContactsContract.CommonDataKinds.StructuredPostal.TYPE_HOME
-                WORK -> ContactsContract.CommonDataKinds.StructuredPostal.TYPE_WORK
-                CUSTOM -> ContactsContract.CommonDataKinds.StructuredPostal.TYPE_CUSTOM
-                OTHER -> ContactsContract.CommonDataKinds.StructuredPostal.TYPE_OTHER
-                else -> ContactsContract.CommonDataKinds.StructuredPostal.TYPE_CUSTOM
+                HOME -> StructuredPostal.TYPE_HOME
+                WORK -> StructuredPostal.TYPE_WORK
+                CUSTOM -> StructuredPostal.TYPE_CUSTOM
+                OTHER -> StructuredPostal.TYPE_OTHER
+                else -> StructuredPostal.TYPE_CUSTOM
             }
         }
 
+        /**
+         * 获取地址标签
+         */
         fun getPostalAddressesLabel(type: Int): String {
             return when (type) {
-                ContactsContract.CommonDataKinds.StructuredPostal.TYPE_WORK -> WORK
-                ContactsContract.CommonDataKinds.StructuredPostal.TYPE_HOME -> HOME
-                ContactsContract.CommonDataKinds.StructuredPostal.TYPE_CUSTOM -> CUSTOM
-                ContactsContract.CommonDataKinds.StructuredPostal.TYPE_OTHER -> OTHER
-                else -> "自定义"
+                StructuredPostal.TYPE_WORK -> WORK
+                StructuredPostal.TYPE_HOME -> HOME
+                StructuredPostal.TYPE_CUSTOM -> CUSTOM
+                StructuredPostal.TYPE_OTHER -> OTHER
+                else -> LABEL_DEFULT
             }
         }
 
@@ -251,29 +260,29 @@ class ContactsConstants {
          */
         fun getUrlType(label: String?): Int {
             return when (label) {
-                HOMEPAGE -> ContactsContract.CommonDataKinds.Website.TYPE_HOMEPAGE
-                WORK -> ContactsContract.CommonDataKinds.Website.TYPE_WORK
-                HOME -> ContactsContract.CommonDataKinds.Website.TYPE_HOME
-                BLOG -> ContactsContract.CommonDataKinds.Website.TYPE_BLOG
-                FTP -> ContactsContract.CommonDataKinds.Website.TYPE_FTP
-                PROFILE -> ContactsContract.CommonDataKinds.Website.TYPE_PROFILE
-                CUSTOM -> ContactsContract.CommonDataKinds.Website.TYPE_CUSTOM
-                OTHER -> ContactsContract.CommonDataKinds.Website.TYPE_OTHER
-                else -> ContactsContract.CommonDataKinds.Website.TYPE_CUSTOM
+                HOMEPAGE -> Website.TYPE_HOMEPAGE
+                WORK -> Website.TYPE_WORK
+                HOME -> Website.TYPE_HOME
+                BLOG -> Website.TYPE_BLOG
+                FTP -> Website.TYPE_FTP
+                PROFILE -> Website.TYPE_PROFILE
+                CUSTOM -> Website.TYPE_CUSTOM
+                OTHER -> Website.TYPE_OTHER
+                else -> Website.TYPE_CUSTOM
             }
         }
 
         fun getUrlLabel(type: Int): String {
             return when (type) {
-                ContactsContract.CommonDataKinds.Website.TYPE_HOMEPAGE -> HOMEPAGE
-                ContactsContract.CommonDataKinds.Website.TYPE_WORK -> WORK
-                ContactsContract.CommonDataKinds.Website.TYPE_HOME -> HOME
-                ContactsContract.CommonDataKinds.Website.TYPE_BLOG -> BLOG
-                ContactsContract.CommonDataKinds.Website.TYPE_FTP -> FTP
-                ContactsContract.CommonDataKinds.Website.TYPE_PROFILE -> PROFILE
-                ContactsContract.CommonDataKinds.Website.TYPE_CUSTOM -> CUSTOM
-                ContactsContract.CommonDataKinds.Website.TYPE_OTHER -> OTHER
-                else -> "自定义"
+                Website.TYPE_HOMEPAGE -> HOMEPAGE
+                Website.TYPE_WORK -> WORK
+                Website.TYPE_HOME -> HOME
+                Website.TYPE_BLOG -> BLOG
+                Website.TYPE_FTP -> FTP
+                Website.TYPE_PROFILE -> PROFILE
+                Website.TYPE_CUSTOM -> CUSTOM
+                Website.TYPE_OTHER -> OTHER
+                else -> LABEL_DEFULT
             }
         }
 
@@ -283,23 +292,23 @@ class ContactsConstants {
          */
         fun getEmailType(label: String?): Int {
             return when (label) {
-                WORK -> ContactsContract.CommonDataKinds.Email.TYPE_WORK
-                HOME -> ContactsContract.CommonDataKinds.Email.TYPE_HOME
-                MOBILE -> ContactsContract.CommonDataKinds.Email.TYPE_MOBILE
-                CUSTOM -> ContactsContract.CommonDataKinds.Email.TYPE_CUSTOM
-                OTHER -> ContactsContract.CommonDataKinds.Email.TYPE_OTHER
-                else -> ContactsContract.CommonDataKinds.Email.TYPE_CUSTOM
+                WORK -> Email.TYPE_WORK
+                HOME -> Email.TYPE_HOME
+                MOBILE -> Email.TYPE_MOBILE
+                CUSTOM -> Email.TYPE_CUSTOM
+                OTHER -> Email.TYPE_OTHER
+                else -> Email.TYPE_CUSTOM
             }
         }
 
         fun getEmailLabel(type: Int): String {
             return when (type) {
-                ContactsContract.CommonDataKinds.Email.TYPE_WORK -> WORK
-                ContactsContract.CommonDataKinds.Email.TYPE_HOME -> HOME
-                ContactsContract.CommonDataKinds.Email.TYPE_MOBILE -> MOBILE
-                ContactsContract.CommonDataKinds.Email.TYPE_CUSTOM -> CUSTOM
-                ContactsContract.CommonDataKinds.Email.TYPE_OTHER -> OTHER
-                else -> "自定义"
+                Email.TYPE_WORK -> WORK
+                Email.TYPE_HOME -> HOME
+                Email.TYPE_MOBILE -> MOBILE
+                Email.TYPE_CUSTOM -> CUSTOM
+                Email.TYPE_OTHER -> OTHER
+                else -> LABEL_DEFULT
             }
 
         }
@@ -309,11 +318,21 @@ class ContactsConstants {
          */
         fun getEventType(label: String?): Int {
             return when (label) {
-                BIRTHDAY -> ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY
-                CUSTOM -> ContactsContract.CommonDataKinds.Event.TYPE_CUSTOM
-                ANNIVERSARY -> ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY
-                OTHER -> ContactsContract.CommonDataKinds.Event.TYPE_OTHER
-                else -> ContactsContract.CommonDataKinds.Event.TYPE_OTHER
+                BIRTHDAY -> Event.TYPE_BIRTHDAY
+                CUSTOM -> Event.TYPE_CUSTOM
+                ANNIVERSARY -> Event.TYPE_ANNIVERSARY
+                OTHER -> Event.TYPE_OTHER
+                else -> Event.TYPE_CUSTOM
+            }
+        }
+
+        fun getEventLabel(type: Int): String {
+            return when (type) {
+                Event.TYPE_BIRTHDAY -> BIRTHDAY
+                Event.TYPE_ANNIVERSARY -> ANNIVERSARY
+                Event.TYPE_OTHER -> OTHER
+                Event.TYPE_CUSTOM -> CUSTOM
+                else -> LABEL_DEFULT
             }
         }
     }

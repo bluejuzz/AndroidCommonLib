@@ -3,9 +3,14 @@ package com.company.commonlib.contacts
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.util.Base64
+import android.widget.ImageView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blankj.utilcode.util.ImageUtils
 import com.blankj.utilcode.util.ToastUtils
+import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.company.commonlib.R
@@ -20,7 +25,15 @@ class ContactsTestActivity : BaseActivity<ContactsModel>() {
     private var adapter: BaseQuickAdapter<ContactBean, BaseViewHolder> = object : BaseQuickAdapter<ContactBean, BaseViewHolder>(R.layout.item_contacts, null) {
 
         override fun convert(helper: BaseViewHolder, item: ContactBean) {
-            helper.setText(R.id.contact_name, item.name + "   " + item.telPhone)
+            helper.setText(R.id.contact_name, item.name + " : " + item.telPhone)
+            val imageView = helper.getView<ImageView>(R.id.contact_avatar)
+            try {
+                val decode = Base64.decode(item.avatar, Base64.DEFAULT)
+                val bitmap: Bitmap? = ImageUtils.bytes2Bitmap(decode)
+                Glide.with(this@ContactsTestActivity).load(bitmap).error(R.mipmap.avatar_def).into(imageView)
+            } catch (e: Exception) {
+                Glide.with(this@ContactsTestActivity).load(R.mipmap.avatar_def).error(R.mipmap.avatar_def).into(imageView)
+            }
         }
     }
     override val layoutId = R.layout.activity_contacts_test

@@ -6,12 +6,12 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.ContactsContract
 import android.provider.ContactsContract.CommonDataKinds.*
-import android.text.format.DateUtils
+import android.util.Base64
 import android.util.Log
 import com.blankj.utilcode.util.TimeUtils
-import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
@@ -27,35 +27,16 @@ class ContactBackupUtil(private val context: Context) {
     private var rawContactInsertIndex: Int = 0
 
     /**
-     * 获取所有联系人
-     *
-     * @return 简要信息
-     */
-    val phones: List<ContactBean>
-        get() {
-            val phoneDtos = ArrayList<ContactBean>()
-            val cr = context.contentResolver
-            val cursor: Cursor = cr.query(Phone.CONTENT_URI, arrayOf(Phone.NUMBER, Phone.DISPLAY_NAME), null, null, null)
-                    ?: return phoneDtos
-            while (cursor.moveToNext()) {
-                val phoneDto = ContactBean(cursor.getString(cursor.getColumnIndex(Phone.NUMBER)), cursor.getString(cursor.getColumnIndex(Phone.DISPLAY_NAME)))
-                phoneDtos.add(phoneDto)
-            }
-            cursor.close()
-            return phoneDtos
-        }
-
-    /**
      * @throws Exception
      */
-    suspend fun readContacts(): ContactBackupResponse? {
+    fun readContacts(): ContactBackupResponse? {
         val contentResolver = context.contentResolver
         //读取通讯录的全部的联系人
         //需要先在raw_contact表中遍历id，并根据id到data表中获取数据
         val response = ContactBackupResponse()
+        val contacts: MutableList<ContactBackupResponse.ContactsBean> = mutableListOf()
         response.name = ""
         response.identifier = ""
-        val contacts: MutableList<ContactBackupResponse.ContactsBean> = mutableListOf()
         //获取联系人信息的Uri
         val uri = ContactsContract.Contacts.CONTENT_URI
         //获取ContentResolver
@@ -67,8 +48,8 @@ class ContactBackupUtil(private val context: Context) {
             val contactId: String? = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID))
             //获取联系人的姓名
             val name: String? = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-
-
+            contactsBean.identifier = contactId
+            contactsBean.displayName = name
             //查询电话类型的数据操作
             val phones = contentResolver.query(Phone.CONTENT_URI, null,
                     Phone.CONTACT_ID + " = " + contactId, null, null)
@@ -214,7 +195,7 @@ class ContactBackupUtil(private val context: Context) {
                             //纪念日,其它
                             Event.TYPE_ANNIVERSARY, Event.TYPE_OTHER -> {
                                 val dateBean = ContactBackupResponse.ContactsBean.DatesBean.DateBean()
-                                date.label = ContactsConstants.ANNIVERSARY
+                                date.label = ContactsConstants.getEventLabel(type)
                                 date.displayLabel = ContactsConstants.getDisplayLabel(date.label, label)
                                 dateBean.year = this[0].toInt()
                                 dateBean.month = this[1].toInt()
@@ -297,6 +278,20 @@ class ContactBackupUtil(private val context: Context) {
                 this.close()
             }
 
+            //头像
+            val photoWhere: String = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?"
+            val photoWhereParams: Array<String?> = arrayOf(contactId, Photo.CONTENT_ITEM_TYPE)
+            val photoCur: Cursor? = contentResolver.query(ContactsContract.Data.CONTENT_URI, null, photoWhere, photoWhereParams, null)
+            photoCur?.apply {
+                if (this.moveToFirst()) {
+                    val imageData = this.getBlob(this.getColumnIndex(Photo.PHOTO))
+                    imageData?.apply {
+                        contactsBean.imageData = Base64.encodeToString(imageData, Base64.DEFAULT)
+                    }
+                }
+                this.close()
+            }
+
             //NOTE
             val noteWhere: String = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?"
             val noteWhereParams: Array<String?> = arrayOf(contactId, Note.CONTENT_ITEM_TYPE)
@@ -366,7 +361,7 @@ class ContactBackupUtil(private val context: Context) {
                 //添加联系人信息STRUCTUREDNAME
                 addStructuredName(it)
                 //添加联系人信息STRUCTUREDNAME
-//                    addImageInfo(it.imageData, operations)
+                addImageInfo(it.imageData)
                 //添加地址信息
                 addPostalAddresses(it.postalAddresses)
                 //添加网站信息
@@ -409,10 +404,11 @@ class ContactBackupUtil(private val context: Context) {
 
     private fun addImageInfo(imageData: String?) {
         imageData?.apply {
+            val bytes = Base64.decode(this, Base64.DEFAULT)
             val operation: ContentProviderOperation = ContentProviderOperation.newInsert(DATA_URI)
                     .withValueBackReference(RAW_CONTACT_ID, rawContactInsertIndex)
                     .withValue(MIME_TYPE, Photo.CONTENT_ITEM_TYPE)
-                    .withValue(Photo.PHOTO, this)
+                    .withValue(Photo.PHOTO, bytes)
                     .withYieldAllowed(true)
                     .build()
             operations.add(operation)

@@ -20,6 +20,7 @@ class ContactBackupResponse {
     var contacts: List<ContactsBean>? = null
 
     class ContactsBean {
+
         /**
          * familyName : 周
          * nonGregorianBirthday : {"caledarIdentifier":2,"year":34,"month":5,"day":26}
@@ -50,7 +51,7 @@ class ContactBackupResponse {
          * instantMessageAddresses : [{"label":"QQ","displayLabel":"QQ","identifier":"B0C26A0C-403D-4850-BE9A-A29C99610544","service":{"service":"QQ","username":"6468843"}},{"label":"Skype","displayLabel":"Skype","identifier":"40311C8C-6368-46D2-BF5D-173F63A5F597","service":{"service":"Skype","username":"ghjkg"}},{"label":"旺旺","displayLabel":"旺旺","identifier":"256BE51E-C460-4DA5-B616-993BF5945040","service":{"service":"旺旺","username":"并不难"}}]
          * previousFamilyName : 朴
         </Work></Home></Work></Home></Work></HomePage></WorkFAX></Work></Home></Other></Anniversary></Manager></Father></Mother> */
-
+        var displayName: String? = null
         var familyName: String? = null
         var imageData: String? = null
         var nonGregorianBirthday: NonGregorianBirthdayBean? = null
@@ -80,6 +81,7 @@ class ContactBackupResponse {
         var groups: List<GroupsBean>? = null
         var emailAddresses: List<EmailAddressesBean>? = null
         var instantMessageAddresses: List<InstantMessageAddressesBean>? = null
+
         class GroupsBean {
             /**
              * label : _$!<Anniversary>!$_
@@ -93,6 +95,7 @@ class ContactBackupResponse {
             var identifier: String? = null
             var name: String? = null
         }
+
         class NonGregorianBirthdayBean {
             /**
              * caledarIdentifier : 2
