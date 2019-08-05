@@ -53,6 +53,9 @@ class ContactBackupResponse {
         </Work></Home></Work></Home></Work></HomePage></WorkFAX></Work></Home></Other></Anniversary></Manager></Father></Mother> */
         var displayName: String? = null
         var familyName: String? = null
+        /**
+         * 头像，将文件通过base64加密后数据（限制大小为1M）
+         */
         var imageData: String? = null
         var nonGregorianBirthday: NonGregorianBirthdayBean? = null
         var birthday: BirthdayBean? = null

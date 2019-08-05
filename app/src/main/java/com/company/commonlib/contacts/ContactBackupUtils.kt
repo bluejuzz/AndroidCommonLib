@@ -20,7 +20,7 @@ import kotlin.collections.ArrayList
  * @date 2019/7/29
  * @des
  */
-class ContactBackupUtil(private val context: Context) {
+class ContactBackupUtils(private val context: Context) {
 
     private var operations: ArrayList<ContentProviderOperation> = ArrayList()
     // 有了它才能给真正的实现批量添加
@@ -660,7 +660,7 @@ class ContactBackupUtil(private val context: Context) {
     }
 
     companion object {
-        val TAG: String = ContactBackupUtil::class.java.simpleName
+        val TAG: String = ContactBackupUtils::class.java.simpleName
         //[content://com.android.contacts/data]
         val DATA_URI: Uri = ContactsContract.Data.CONTENT_URI
 
