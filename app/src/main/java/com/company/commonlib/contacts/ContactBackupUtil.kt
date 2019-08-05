@@ -345,7 +345,8 @@ class ContactBackupUtil(private val context: Context) {
      * @throws Exception
      */
     fun writeContacts(response: ContactBackupResponse?): Boolean {
-        response?.apply {
+        response ?: return true
+        response.apply {
             contacts?.forEach { it ->
                 rawContactInsertIndex = operations.size
                 val operation = ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
@@ -387,19 +388,16 @@ class ContactBackupUtil(private val context: Context) {
                 val resolver = context.contentResolver
                 //批量执行,返回执行结果集
                 try {
-                    val results = resolver.applyBatch(ContactsContract.AUTHORITY, operations)
-                    for (result in results) {
-                        Log.i(TAG, result.uri.toString())
-                    }
+                    resolver.applyBatch(ContactsContract.AUTHORITY, operations)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 } finally {
                     operations.clear()
                 }
             }
+            Log.i(TAG, "联系人写入完成")
             return true
         }
-        return true
     }
 
     private fun addImageInfo(imageData: String?) {

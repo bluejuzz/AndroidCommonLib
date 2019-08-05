@@ -86,7 +86,7 @@ abstract class BaseActivity<M : BaseViewModel> : AppCompatActivity(), IActivity 
         mSubscribe = Observable.timer(TIMEOUT_TIME.toLong(), TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .`as`<ObservableSubscribeProxy<Long>>(bindLifecycle(Lifecycle.Event.ON_DESTROY))
+                .`as`(bindLifecycle(Lifecycle.Event.ON_DESTROY))
                 .subscribe {
                     if (mPopupView!!.isShow) {
                         hideLoading()
@@ -120,6 +120,6 @@ abstract class BaseActivity<M : BaseViewModel> : AppCompatActivity(), IActivity 
         /**
          * 超时时间
          */
-        private const val TIMEOUT_TIME = 10
+        private const val TIMEOUT_TIME = 60
     }
 }
