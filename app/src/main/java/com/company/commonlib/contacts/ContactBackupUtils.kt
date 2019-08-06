@@ -1,5 +1,6 @@
 package com.company.commonlib.contacts
 
+import android.annotation.SuppressLint
 import android.content.ContentProviderOperation
 import android.content.Context
 import android.database.Cursor
@@ -18,7 +19,7 @@ import kotlin.collections.ArrayList
  * @author dinglaihong
  * @email 18279727279@163.com
  * @date 2019/7/29
- * @des
+ * @des 手机联系人工具类
  */
 class ContactBackupUtils(private val context: Context) {
 
@@ -29,6 +30,7 @@ class ContactBackupUtils(private val context: Context) {
     /**
      * @throws Exception
      */
+    @SuppressLint("Recycle")
     fun readContacts(): ContactBackupResponse? {
         val contentResolver = context.contentResolver
         //读取通讯录的全部的联系人
@@ -178,8 +180,8 @@ class ContactBackupUtils(private val context: Context) {
                             //生日
                             Event.TYPE_BIRTHDAY -> {
                                 val birthdayBean = ContactBackupResponse.ContactsBean.BirthdayBean()
-                                birthdayBean.month = this[0].toInt()
-                                birthdayBean.day = this[1].toInt()
+                                birthdayBean.month = this[1].toInt()
+                                birthdayBean.day = this[2].toInt()
                                 birthdayBean.caledarIdentifier = 0
                                 contactsBean.birthday = birthdayBean
                             }
@@ -285,8 +287,12 @@ class ContactBackupUtils(private val context: Context) {
             photoCur?.apply {
                 if (this.moveToFirst()) {
                     val imageData = this.getBlob(this.getColumnIndex(Photo.PHOTO))
-                    imageData?.apply {
-                        contactsBean.imageData = Base64.encodeToString(imageData, Base64.DEFAULT)
+                    try {
+                        contactsBean.imageData = imageData?.let {
+                            Base64.encodeToString(imageData, Base64.DEFAULT)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
                 }
                 this.close()
@@ -339,67 +345,6 @@ class ContactBackupUtils(private val context: Context) {
         return response
     }
 
-/*    */
-    /**
-     * 添加和修改联系人
-     *
-     * @throws Exception
-     *//*
-    fun writeContacts(response: ContactBackupResponse?): Boolean {
-        response ?: return true
-        return response.run {
-            contacts?.forEach { it ->
-                rawContactInsertIndex = operations.size
-                val operation = ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
-                        .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
-                        .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
-                        .withYieldAllowed(true)
-                        .build()
-                operations.add(operation)
-                //添加IM信息
-                addIMAddresses(it.instantMessageAddresses)
-                //添加电话信息
-                addPhoneNumbers(it.phoneNumbers)
-                //添加联系人信息STRUCTUREDNAME
-                addStructuredName(it)
-                //添加联系人信息STRUCTUREDNAME
-                addImageInfo(it.imageData)
-                //添加地址信息
-                addPostalAddresses(it.postalAddresses)
-                //添加网站信息
-                addUrlAddresses(it.urlAddresses)
-                //添加邮箱信息
-                addEmailAddresses(it.emailAddresses)
-                //添加昵称信息
-                addNicknameInfo(it.nickname)
-                //添加Note信息
-                addNoteInfo(it.note)
-                //添加Organization信息
-                addOrganizationInfo(it)
-                //添加Relations信息
-                addRelations(it.contactRelations)
-                //添加Birthday信息
-                addBirthday(it.birthday, it.nonGregorianBirthday)
-                //添加Dates信息
-                addDates(it.dates)
-                //添加Groups信息
-                addGroups(it.groups)
-                //添加社交信息
-                addSocialProfiles(it.socialProfiles)
-                val resolver = context.contentResolver
-                //批量执行,返回执行结果集
-                try {
-                    resolver.applyBatch(ContactsContract.AUTHORITY, operations)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                } finally {
-                    operations.clear()
-                }
-            }
-            Log.i(TAG, "联系人写入完成")
-            true
-        }
-    }*/
 
     /**
      * 添加和修改联系人
