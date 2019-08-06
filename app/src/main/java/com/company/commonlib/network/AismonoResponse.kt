@@ -1,7 +1,5 @@
 package com.company.commonlib.network
 
-import com.company.commonlibrary.bean.IResponse
-
 /**
  * @author dlh
  * @email 18279727279@163.com

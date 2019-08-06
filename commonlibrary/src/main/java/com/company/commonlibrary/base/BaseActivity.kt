@@ -8,11 +8,11 @@ import androidx.annotation.MainThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProviders
+import com.blankj.utilcode.util.BarUtils
 import com.company.commonlibrary.util.RxLifecycleUtils
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
 import com.uber.autodispose.AutoDisposeConverter
-import com.uber.autodispose.ObservableSubscribeProxy
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -47,6 +47,7 @@ abstract class BaseActivity<M : BaseViewModel> : AppCompatActivity(), IActivity 
             val window = window
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         }
+        BarUtils.setStatusBarLightMode(this,false)
         setContentView(layoutId)
         viewModelClass = getT1(this, 0)
         if (viewModelClass != null) {

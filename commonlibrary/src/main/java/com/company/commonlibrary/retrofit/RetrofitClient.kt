@@ -66,7 +66,7 @@ object RetrofitClient {
             val interceptor = HttpLoggingInterceptor()
             interceptor.level =
                     if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
-            val builder = OkHttpClient.Builder()
+            val builder: OkHttpClient.Builder = OkHttpClient.Builder()
                     .addInterceptor(interceptor)
                     .connectTimeout(TIME_OUT, TimeUnit.SECONDS)
                     .readTimeout(TIME_OUT, TimeUnit.SECONDS)
@@ -88,7 +88,7 @@ object RetrofitClient {
     fun getFileRetrofit(downloadListener: DownloadListener?): Retrofit {
         val fileRetrofit: Retrofit by lazy {
             RetrofitClient.downloadListener = downloadListener
-            val builder = OkHttpClient.Builder()
+            val builder: OkHttpClient.Builder = OkHttpClient.Builder()
                     .addInterceptor(DOWNLOAD_INTERCEPTOR)
                     .connectTimeout(FILE_TIME_OUT, TimeUnit.SECONDS)
                     .readTimeout(FILE_TIME_OUT, TimeUnit.SECONDS)

@@ -1,19 +1,25 @@
 package com.company.commonlib
 
+import android.annotation.SuppressLint
 import android.view.View
+import com.blankj.utilcode.util.LogUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.company.commonlib.camerax.CameraXBarcodeAnalyzerActivity
 import com.company.commonlib.contacts.ContactsTestActivity
-import com.company.commonlib.html.HtmlTestActivity
-import com.company.commonlib.network.AismonoResponse
-import com.company.commonlib.network.BannerData
-import com.company.commonlib.network.MyCardData
-import com.company.commonlib.network.WanResponse
-import com.company.commonlibrary.base.*
+import com.company.commonlib.network.*
+import com.company.commonlibrary.base.BaseActivity
 import com.company.commonlibrary.bean.RequestEntity
+import com.company.commonlibrary.constant.CommonConstants
 import com.company.commonlibrary.retrofit.BaseHttpModel
+import com.company.commonlibrary.retrofit.DownloadListener
 import com.company.commonlibrary.retrofit.HttpObserver
 import com.company.commonlibrary.util.NetworkChangeUtils
+import com.tbruyelle.rxpermissions2.RxPermissions
+import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Consumer
 import kotlinx.android.synthetic.main.activity_main.*
+import org.reactivestreams.Subscriber
+import org.reactivestreams.Subscription
 
 /**
  * @author dinglaihong
@@ -25,32 +31,10 @@ class MainActivity : BaseActivity<BaseHttpModel>() {
 
     override val layoutId = R.layout.activity_main
 
+    @SuppressLint("AutoDispose")
     override fun initView() {
-//        NetworkChangeUtils.registerListener(changeListener = NetworkChangeUtils.NetworkChangeListener())
         findViewById<View>(R.id.test_http).setOnClickListener {
-            showLoading("加载中")
-            val requestBody = mViewModel.getRequestBody(RequestEntity<Map<String, Any>>(hashMapOf("phone" to 18279727279L)))
-            mViewModel.post("https://http.aismono.net/mono-biz-app/educationclass/getCardList", requestBody)
-                    .observe(this, object : HttpObserver<AismonoResponse<List<MyCardData.CardBean>>>() {
-                        override fun onSuccess(response: AismonoResponse<List<MyCardData.CardBean>>) {
-                        }
-
-                        override fun onFinish() {
-                            hideLoading()
-                        }
-
-                    })
-
-            mViewModel.get("https://www.wanandroid.com/banner/json")
-                    .observe(this, object : HttpObserver<WanResponse<List<BannerData>>>() {
-                        override fun onSuccess(response: WanResponse<List<BannerData>>) {
-                        }
-
-                        override fun onFinish() {
-                            hideLoading()
-                        }
-
-                    })
+            NetworkActivity.starter(this)
         }
         test_camerax.setOnClickListener {
             CameraXBarcodeAnalyzerActivity.starter(this)

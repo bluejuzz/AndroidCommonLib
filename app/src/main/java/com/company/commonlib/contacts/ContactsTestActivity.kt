@@ -47,7 +47,7 @@ class ContactsTestActivity : BaseActivity<ContactsModel>() {
         }
         contact_r.setOnClickListener {
             showLoading("正在读取联系人")
-            mViewModel.getContacts().observe(this@ContactsTestActivity, Observer {
+            mViewModel.readContacts().observe(this@ContactsTestActivity, Observer {
                 hideLoading()
                 adapter.setNewData(it)
             })
