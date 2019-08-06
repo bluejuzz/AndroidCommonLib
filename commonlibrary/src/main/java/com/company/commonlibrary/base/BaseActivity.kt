@@ -43,11 +43,13 @@ abstract class BaseActivity<M : BaseViewModel> : AppCompatActivity(), IActivity 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val window = window
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        }*/
+        if (!BarUtils.isStatusBarLightMode(this)) {
+            BarUtils.setStatusBarLightMode(this, false)
         }
-        BarUtils.setStatusBarLightMode(this,false)
         setContentView(layoutId)
         viewModelClass = getT1(this, 0)
         if (viewModelClass != null) {
