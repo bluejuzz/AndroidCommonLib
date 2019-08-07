@@ -2,7 +2,6 @@ package com.company.commonlib.network
 
 /**
  * @author dlh
- * @company {@see <a>http://www.aismono.net</a>}
  * @email 18279727279@163.com
  * @date 2019/04/15 17:07
  * @des
