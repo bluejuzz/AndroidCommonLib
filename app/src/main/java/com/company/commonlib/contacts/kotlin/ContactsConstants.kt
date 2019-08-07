@@ -1,4 +1,4 @@
-package com.company.commonlib.contacts
+package com.company.commonlib.contacts.kotlin
 
 import android.provider.ContactsContract.CommonDataKinds.*
 

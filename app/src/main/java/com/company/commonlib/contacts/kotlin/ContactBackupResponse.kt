@@ -1,10 +1,10 @@
-package com.company.commonlib.contacts
+package com.company.commonlib.contacts.kotlin
 
 /**
  * @author dinglaihong
  * @email 18279727279@163.com
  * @date 2019/7/30
- * @des 通讯录备份
+ * @des 通讯录备份实体类，与IOS同步协议
  */
 class ContactBackupResponse {
 

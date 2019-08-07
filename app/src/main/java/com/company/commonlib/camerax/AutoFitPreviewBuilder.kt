@@ -87,26 +87,26 @@ class AutoFitPreviewBuilder private constructor(config: PreviewConfig,
 
         // Every time the view finder is updated, recompute layout
         useCase.onPreviewOutputUpdateListener = Preview.OnPreviewOutputUpdateListener {
-            val viewFinder =
+            val textureView: TextureView =
                     viewFinderRef.get() ?: return@OnPreviewOutputUpdateListener
 
             // To update the SurfaceTexture, we have to remove it and re-add it
-            val parent = viewFinder.parent as ViewGroup
-            parent.removeView(viewFinder)
-            parent.addView(viewFinder, 0)
+            val parent = textureView.parent as ViewGroup
+            parent.removeView(textureView)
+            parent.addView(textureView, 0)
 
-            viewFinder.surfaceTexture = it.surfaceTexture
+            textureView.surfaceTexture = it.surfaceTexture
             bufferRotation = it.rotationDegrees
-            val rotation = getDisplaySurfaceRotation(viewFinder.display)
-            updateTransform(viewFinder, rotation, it.textureSize, viewFinderDimens)
+            val rotation = getDisplaySurfaceRotation(textureView.display)
+            updateTransform(textureView, rotation, it.textureSize, viewFinderDimens)
         }
 
         // Every time the provided texture view changes, recompute layout
         viewFinder.addOnLayoutChangeListener { view, left, top, right, bottom, _, _, _, _ ->
-            val viewFinder = view as TextureView
+            val textureView = view as TextureView
             val newViewFinderDimens = Size(right - left, bottom - top)
-            val rotation = getDisplaySurfaceRotation(viewFinder.display)
-            updateTransform(viewFinder, rotation, bufferDimens, newViewFinderDimens)
+            val rotation = getDisplaySurfaceRotation(textureView.display)
+            updateTransform(textureView, rotation, bufferDimens, newViewFinderDimens)
         }
 
         // Every time the orientation of device changes, recompute layout
