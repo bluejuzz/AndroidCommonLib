@@ -5,19 +5,32 @@ import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.ContactsContract;
+
 import android.util.Base64;
 import android.util.Log;
 
 import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.Utils;
-import com.company.commonlib.contacts.kotlin.ContactBackupUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import android.provider.ContactsContract;
+
+import static android.provider.ContactsContract.CommonDataKinds.Email;
+import static android.provider.ContactsContract.CommonDataKinds.Event;
+import static android.provider.ContactsContract.CommonDataKinds.Im;
+import static android.provider.ContactsContract.CommonDataKinds.Nickname;
+import static android.provider.ContactsContract.CommonDataKinds.Note;
+import static android.provider.ContactsContract.CommonDataKinds.Organization;
+import static android.provider.ContactsContract.CommonDataKinds.Photo;
+import static android.provider.ContactsContract.CommonDataKinds.Relation;
+import static android.provider.ContactsContract.CommonDataKinds.StructuredName;
+import static android.provider.ContactsContract.CommonDataKinds.StructuredPostal;
+import static android.provider.ContactsContract.CommonDataKinds.Website;
+import static android.provider.ContactsContract.CommonDataKinds.Phone;
 
 /**
  * @author dinglaihong
@@ -25,10 +38,11 @@ import java.util.Locale;
  * @date 2019/8/7
  * @des
  */
+@SuppressWarnings("ALL")
 public class ContactsUtils {
     private static ArrayList<ContentProviderOperation> operations = new ArrayList<>();
     private static int rawContactInsertIndex;
-    private static final String TAG = ContactBackupUtils.class.getSimpleName();
+    private static final String TAG = ContactsUtils.class.getSimpleName();
     private static final Uri DATA_URI = ContactsContract.Data.CONTENT_URI;
     private static final String RAW_CONTACT_ID = ContactsContract.Data.RAW_CONTACT_ID;
     private static final String MIME_TYPE = ContactsContract.Data.MIMETYPE;
@@ -47,21 +61,21 @@ public class ContactsUtils {
             ContactsBackupBean.ContactsBean contactsBean;
             for (cursor = var10000; cursor.moveToNext(); contacts.add(contactsBean)) {
                 contactsBean = new ContactsBackupBean.ContactsBean();
-                String contactId = cursor.getString(cursor.getColumnIndex("_id"));
-                String name = cursor.getString(cursor.getColumnIndex("display_name"));
+                String contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                 contactsBean.setIdentifier(contactId);
                 contactsBean.setDisplayName(name);
-                Cursor phones = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, "contact_id = " + contactId, null, null);
+                Cursor phones = contentResolver.query(Phone.CONTENT_URI, null, "contact_id = " + contactId, null, null);
                 if (phones != null) {
                     List<ContactsBackupBean.ContactsBean.PhoneNumbersBean> phoneNumbers = new ArrayList<>();
 
                     while (phones.moveToNext()) {
                         ContactsBackupBean.ContactsBean.PhoneNumbersBean numbersBean = new ContactsBackupBean.ContactsBean.PhoneNumbersBean();
-                        int phoneType = phones.getInt(phones.getColumnIndex("data2"));
-                        String label = phones.getString(phones.getColumnIndex("data3"));
+                        int phoneType = phones.getInt(phones.getColumnIndex(Phone.TYPE));
+                        String label = phones.getString(phones.getColumnIndex(Phone.LABEL));
                         numbersBean.setLabel(ContactsConverter.getPhoneLabel(phoneType));
                         numbersBean.setDisplayLabel(ContactsConverter.getDisplayLabel(numbersBean.getLabel(), label));
-                        String phoneNumber = phones.getString(phones.getColumnIndex("data1"));
+                        String phoneNumber = phones.getString(phones.getColumnIndex(Phone.NUMBER));
                         ContactsBackupBean.ContactsBean.PhoneNumbersBean.PhoneNumberBean bean = new ContactsBackupBean.ContactsBean.PhoneNumbersBean.PhoneNumberBean();
                         bean.setNumber(phoneNumber);
                         numbersBean.setPhoneNumber(bean);
@@ -72,16 +86,16 @@ public class ContactsUtils {
                     phones.close();
                 }
 
-                Cursor emails = contentResolver.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, "contact_id = " + contactId, null, null);
+                Cursor emails = contentResolver.query(Email.CONTENT_URI, null, "contact_id = " + contactId, null, null);
                 if (emails != null) {
                     ArrayList<ContactsBackupBean.ContactsBean.EmailAddressesBean> emailAddresses = new ArrayList<>();
                     while (emails.moveToNext()) {
                         ContactsBackupBean.ContactsBean.EmailAddressesBean emailAddressesBean = new ContactsBackupBean.ContactsBean.EmailAddressesBean();
-                        String label = emails.getString(emails.getColumnIndex("data3"));
-                        int type = emails.getInt(emails.getColumnIndex("data2"));
+                        String label = emails.getString(emails.getColumnIndex(Email.LABEL));
+                        int type = emails.getInt(emails.getColumnIndex(Email.TYPE));
                         emailAddressesBean.setLabel(ContactsConverter.getEmailLabel(type));
                         emailAddressesBean.setDisplayLabel(ContactsConverter.getDisplayLabel(emailAddressesBean.getLabel(), label));
-                        String email = emails.getString(emails.getColumnIndex("data1"));
+                        String email = emails.getString(emails.getColumnIndex(Email.DATA));
                         emailAddressesBean.setEmail(email);
                         emailAddresses.add(emailAddressesBean);
                     }
@@ -91,18 +105,18 @@ public class ContactsUtils {
                 }
 
                 String imWhere = "contact_id = ? AND mimetype = ?";
-                String[] imWhereParams = new String[]{contactId, "vnd.android.cursor.item/im"};
+                String[] imWhereParams = new String[]{contactId, Im.CONTENT_ITEM_TYPE};
                 Cursor ims = contentResolver.query(ContactsContract.Data.CONTENT_URI, null, imWhere, imWhereParams, null);
                 if (ims != null) {
                     List<ContactsBackupBean.ContactsBean.InstantMessageAddressesBean> imAddresses = new ArrayList<>();
 
                     while (ims.moveToNext()) {
                         ContactsBackupBean.ContactsBean.InstantMessageAddressesBean imAddressesBean = new ContactsBackupBean.ContactsBean.InstantMessageAddressesBean();
-                        String imsLabel = ims.getString(ims.getColumnIndex("data3"));
-                        int type = ims.getInt(ims.getColumnIndex("data5"));
+                        String imsLabel = ims.getString(ims.getColumnIndex(Im.LABEL));
+                        int type = ims.getInt(ims.getColumnIndex(Im.PROTOCOL));
                         imAddressesBean.setLabel(ContactsConverter.getImLabel(type));
                         imAddressesBean.setDisplayLabel(ContactsConverter.getDisplayLabel(imAddressesBean.getLabel(), imsLabel));
-                        String data = ims.getString(ims.getColumnIndex("data1"));
+                        String data = ims.getString(ims.getColumnIndex(Im.DATA));
                         ContactsBackupBean.ContactsBean.InstantMessageAddressesBean.ServiceBean serviceBean = new ContactsBackupBean.ContactsBean.InstantMessageAddressesBean.ServiceBean();
                         serviceBean.setService(imAddressesBean.getDisplayLabel());
                         serviceBean.setUsername(data);
@@ -115,17 +129,17 @@ public class ContactsUtils {
                 }
 
                 String relationWhere = "contact_id = ? AND mimetype = ?";
-                String[] relationWhereParams = new String[]{contactId, "vnd.android.cursor.item/relation"};
+                String[] relationWhereParams = new String[]{contactId, Relation.CONTENT_ITEM_TYPE};
                 Cursor relationCur = contentResolver.query(ContactsContract.Data.CONTENT_URI, null, relationWhere, relationWhereParams, null);
                 if (relationCur != null) {
                     List<ContactsBackupBean.ContactsBean.ContactRelationsBean> relationsBeans = new ArrayList<>();
                     while (relationCur.moveToNext()) {
                         ContactsBackupBean.ContactsBean.ContactRelationsBean contactRelationsBean = new ContactsBackupBean.ContactsBean.ContactRelationsBean();
-                        String relationsLabel = relationCur.getString(relationCur.getColumnIndex("data3"));
-                        int type = relationCur.getInt(relationCur.getColumnIndex("data2"));
+                        String relationsLabel = relationCur.getString(relationCur.getColumnIndex(Relation.LABEL));
+                        int type = relationCur.getInt(relationCur.getColumnIndex(Relation.TYPE));
                         contactRelationsBean.setLabel(ContactsConverter.getRelationLabel(type));
                         contactRelationsBean.setDisplayLabel(ContactsConverter.getDisplayLabel(contactRelationsBean.getLabel(), relationsLabel));
-                        String data = relationCur.getString(relationCur.getColumnIndex("data1"));
+                        String data = relationCur.getString(relationCur.getColumnIndex(Relation.DATA));
                         ContactsBackupBean.ContactsBean.ContactRelationsBean.RelationBean relationBean = new ContactsBackupBean.ContactsBean.ContactRelationsBean.RelationBean();
                         relationBean.setName(data);
                         contactRelationsBean.setRelation(relationBean);
@@ -137,18 +151,18 @@ public class ContactsUtils {
                 }
 
                 String urlWhere = "contact_id = ? AND mimetype = ?";
-                String[] urlWhereParams = new String[]{contactId, "vnd.android.cursor.item/website"};
+                String[] urlWhereParams = new String[]{contactId, Website.CONTENT_ITEM_TYPE};
                 Cursor urlCur = contentResolver.query(ContactsContract.Data.CONTENT_URI, null, urlWhere, urlWhereParams, null);
                 if (urlCur != null) {
                     List<ContactsBackupBean.ContactsBean.UrlAddressesBean> urlAddresses = new ArrayList<>();
 
                     while (urlCur.moveToNext()) {
                         ContactsBackupBean.ContactsBean.UrlAddressesBean urlAddresseBean = new ContactsBackupBean.ContactsBean.UrlAddressesBean();
-                        String urlLabel = urlCur.getString(urlCur.getColumnIndex("data3"));
-                        int type = urlCur.getInt(urlCur.getColumnIndex("data2"));
+                        String urlLabel = urlCur.getString(urlCur.getColumnIndex(Website.LABEL));
+                        int type = urlCur.getInt(urlCur.getColumnIndex(Website.TYPE));
                         urlAddresseBean.setLabel(ContactsConverter.getUrlLabel(type));
                         urlAddresseBean.setDisplayLabel(ContactsConverter.getDisplayLabel(urlAddresseBean.getLabel(), urlLabel));
-                        String url = urlCur.getString(urlCur.getColumnIndex("data1"));
+                        String url = urlCur.getString(urlCur.getColumnIndex(Website.URL));
                         urlAddresseBean.setUrl(url);
                         urlAddresses.add(urlAddresseBean);
                     }
@@ -158,16 +172,16 @@ public class ContactsUtils {
                 }
 
                 String eventWhere = "contact_id = ? AND mimetype = ?";
-                String[] eventParams = new String[]{contactId, "vnd.android.cursor.item/contact_event"};
+                String[] eventParams = new String[]{contactId, Event.CONTENT_ITEM_TYPE};
                 Cursor eventCur = contentResolver.query(ContactsContract.Data.CONTENT_URI, null, eventWhere, eventParams, null);
                 if (eventCur != null) {
                     List<ContactsBackupBean.ContactsBean.DatesBean> dates = new ArrayList<>();
 
                     while (eventCur.moveToNext()) {
                         ContactsBackupBean.ContactsBean.DatesBean date = new ContactsBackupBean.ContactsBean.DatesBean();
-                        String photoLabel = eventCur.getString(eventCur.getColumnIndex("data3"));
-                        int type = eventCur.getInt(eventCur.getColumnIndex("data2"));
-                        String startTime = eventCur.getString(eventCur.getColumnIndex("data1"));
+                        String photoLabel = eventCur.getString(eventCur.getColumnIndex(Event.LABEL));
+                        int type = eventCur.getInt(eventCur.getColumnIndex(Event.TYPE));
+                        String startTime = eventCur.getString(eventCur.getColumnIndex(Event.START_DATE));
                         String[] ymd = startTime.split("-");
                         if (ymd.length > 0) {
                             String var40;
@@ -225,22 +239,22 @@ public class ContactsUtils {
                     eventCur.close();
                 }
 
-                Cursor addressCur = contentResolver.query(ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI, null, "contact_id = " + contactId, null, null);
+                Cursor addressCur = contentResolver.query(StructuredPostal.CONTENT_URI, null, "contact_id = " + contactId, null, null);
                 if (addressCur != null) {
                     List<ContactsBackupBean.ContactsBean.PostalAddressesBean> postalAddresses = new ArrayList<>();
 
                     while (addressCur.moveToNext()) {
                         ContactsBackupBean.ContactsBean.PostalAddressesBean postalAddresseBean = new ContactsBackupBean.ContactsBean.PostalAddressesBean();
-                        String postalLabel = addressCur.getString(addressCur.getColumnIndex("data3"));
-                        int type = addressCur.getInt(addressCur.getColumnIndex("data2"));
+                        String postalLabel = addressCur.getString(addressCur.getColumnIndex(StructuredPostal.LABEL));
+                        int type = addressCur.getInt(addressCur.getColumnIndex(StructuredPostal.TYPE));
                         postalAddresseBean.setLabel(ContactsConverter.getPostalAddressesLabel(type));
                         postalAddresseBean.setDisplayLabel(ContactsConverter.getDisplayLabel(postalAddresseBean.getLabel(), postalLabel));
-                        addressCur.getString(addressCur.getColumnIndex("data1"));
-                        String city = addressCur.getString(addressCur.getColumnIndex("data7"));
-                        String country = addressCur.getString(addressCur.getColumnIndex("data10"));
-                        String street = addressCur.getString(addressCur.getColumnIndex("data4"));
-                        String postalCode = addressCur.getString(addressCur.getColumnIndex("data9"));
-                        String region = addressCur.getString(addressCur.getColumnIndex("data8"));
+                        addressCur.getString(addressCur.getColumnIndex(StructuredPostal.DATA));
+                        String city = addressCur.getString(addressCur.getColumnIndex(StructuredPostal.CITY));
+                        String country = addressCur.getString(addressCur.getColumnIndex(StructuredPostal.COUNTRY));
+                        String street = addressCur.getString(addressCur.getColumnIndex(StructuredPostal.STREET));
+                        String postalCode = addressCur.getString(addressCur.getColumnIndex(StructuredPostal.POSTCODE));
+                        String region = addressCur.getString(addressCur.getColumnIndex(StructuredPostal.REGION));
                         ContactsBackupBean.ContactsBean.PostalAddressesBean.AddressBean bean = new ContactsBackupBean.ContactsBean.PostalAddressesBean.AddressBean();
                         bean.setCity(city);
                         bean.setCountry(country);
@@ -257,17 +271,17 @@ public class ContactsUtils {
                 }
 
                 String orgWhere = "contact_id = ? AND mimetype = ?";
-                String[] orgWhereParams = new String[]{contactId, "vnd.android.cursor.item/organization"};
+                String[] orgWhereParams = new String[]{contactId, Organization.CONTENT_ITEM_TYPE};
                 Cursor orgCur = contentResolver.query(ContactsContract.Data.CONTENT_URI, null, orgWhere, orgWhereParams, null);
                 if (orgCur != null) {
                     if (orgCur.moveToFirst()) {
-                        String company = orgCur.getString(orgCur.getColumnIndex("data1"));
+                        String company = orgCur.getString(orgCur.getColumnIndex(Organization.DATA));
                         contactsBean.setOrganizationName(company);
-                        String organizationPh = orgCur.getString(orgCur.getColumnIndex("data8"));
+                        String organizationPh = orgCur.getString(orgCur.getColumnIndex(Organization.PHONETIC_NAME));
                         contactsBean.setPhoneticOrganizationName(organizationPh);
-                        String department = orgCur.getString(orgCur.getColumnIndex("data5"));
+                        String department = orgCur.getString(orgCur.getColumnIndex(Organization.DEPARTMENT));
                         contactsBean.setDepartmentName(department);
-                        String title = orgCur.getString(orgCur.getColumnIndex("data4"));
+                        String title = orgCur.getString(orgCur.getColumnIndex(Organization.TITLE));
                         contactsBean.setJobTitle(title);
                     }
 
@@ -275,11 +289,11 @@ public class ContactsUtils {
                 }
 
                 String nickNameWhere = "contact_id = ? AND mimetype = ?";
-                String[] nickNameWhereParams = new String[]{contactId, "vnd.android.cursor.item/nickname"};
+                String[] nickNameWhereParams = new String[]{contactId, Nickname.CONTENT_ITEM_TYPE};
                 Cursor nickNameCur = contentResolver.query(ContactsContract.Data.CONTENT_URI, null, nickNameWhere, nickNameWhereParams, null);
                 if (nickNameCur != null) {
                     if (nickNameCur.moveToFirst()) {
-                        String nickname = nickNameCur.getString(nickNameCur.getColumnIndex("data1"));
+                        String nickname = nickNameCur.getString(nickNameCur.getColumnIndex(Nickname.NAME));
                         contactsBean.setNickname(nickname);
                     }
 
@@ -287,11 +301,11 @@ public class ContactsUtils {
                 }
 
                 String photoWhere = "contact_id = ? AND mimetype = ?";
-                String[] photoWhereParams = new String[]{contactId, "vnd.android.cursor.item/photo"};
+                String[] photoWhereParams = new String[]{contactId, Photo.CONTENT_ITEM_TYPE};
                 Cursor photoCur = contentResolver.query(ContactsContract.Data.CONTENT_URI, null, photoWhere, photoWhereParams, null);
                 if (photoCur != null) {
                     if (photoCur.moveToFirst()) {
-                        byte[] imageData = photoCur.getBlob(photoCur.getColumnIndex("data15"));
+                        byte[] imageData = photoCur.getBlob(photoCur.getColumnIndex(Photo.PHOTO));
 
                         try {
                             ContactsBackupBean.ContactsBean var126 = contactsBean;
@@ -313,11 +327,11 @@ public class ContactsUtils {
                 }
 
                 String noteWhere = "contact_id = ? AND mimetype = ?";
-                String[] noteWhereParams = new String[]{contactId, "vnd.android.cursor.item/note"};
+                String[] noteWhereParams = new String[]{contactId, Note.CONTENT_ITEM_TYPE};
                 Cursor noteCur = contentResolver.query(ContactsContract.Data.CONTENT_URI, null, noteWhere, noteWhereParams, null);
                 if (noteCur != null) {
                     if (noteCur.moveToFirst()) {
-                        String note = noteCur.getString(noteCur.getColumnIndex("data1"));
+                        String note = noteCur.getString(noteCur.getColumnIndex(Note.NOTE));
                         contactsBean.setNote(note);
                     }
 
@@ -325,19 +339,19 @@ public class ContactsUtils {
                 }
 
                 String nameWhere = "contact_id = ? AND mimetype = ?";
-                String[] nameWhereParams = new String[]{contactId, "vnd.android.cursor.item/name"};
+                String[] nameWhereParams = new String[]{contactId, StructuredName.CONTENT_ITEM_TYPE};
                 Cursor nameCur = contentResolver.query(ContactsContract.Data.CONTENT_URI, null, nameWhere, nameWhereParams, null);
                 if (nameCur != null) {
                     if (nameCur.moveToFirst()) {
-                        nameCur.getString(nameCur.getColumnIndex("data1"));
-                        String familyName = nameCur.getString(nameCur.getColumnIndex("data3"));
-                        String phoneticFamilyName = nameCur.getString(nameCur.getColumnIndex("data9"));
-                        String midName = nameCur.getString(nameCur.getColumnIndex("data5"));
-                        String phoneticMidName = nameCur.getString(nameCur.getColumnIndex("data8"));
-                        String givenName = nameCur.getString(nameCur.getColumnIndex("data2"));
-                        String phoneticGivenName = nameCur.getString(nameCur.getColumnIndex("data7"));
-                        String prefix = nameCur.getString(nameCur.getColumnIndex("data4"));
-                        String suffix = nameCur.getString(nameCur.getColumnIndex("data6"));
+                        nameCur.getString(nameCur.getColumnIndex(StructuredName.DISPLAY_NAME));
+                        String familyName = nameCur.getString(nameCur.getColumnIndex(StructuredName.FAMILY_NAME));
+                        String phoneticFamilyName = nameCur.getString(nameCur.getColumnIndex(StructuredName.PHONETIC_FAMILY_NAME));
+                        String midName = nameCur.getString(nameCur.getColumnIndex(StructuredName.MIDDLE_NAME));
+                        String phoneticMidName = nameCur.getString(nameCur.getColumnIndex(StructuredName.PHONETIC_MIDDLE_NAME));
+                        String givenName = nameCur.getString(nameCur.getColumnIndex(StructuredName.GIVEN_NAME));
+                        String phoneticGivenName = nameCur.getString(nameCur.getColumnIndex(StructuredName.PHONETIC_GIVEN_NAME));
+                        String prefix = nameCur.getString(nameCur.getColumnIndex(StructuredName.PREFIX));
+                        String suffix = nameCur.getString(nameCur.getColumnIndex(StructuredName.SUFFIX));
                         contactsBean.setFamilyName(familyName);
                         contactsBean.setPhoneticFamilyName(phoneticFamilyName);
                         contactsBean.setMiddleName(midName);
@@ -368,12 +382,12 @@ public class ContactsUtils {
                 for (ContactsBackupBean.ContactsBean elementIv : var21) {
                     rawContactInsertIndex = operations.size();
                     ContentProviderOperation operation = ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
-                            .withValue("account_type", null)
-                            .withValue("account_name", null)
+                            .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
+                            .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
                             .withYieldAllowed(true)
                             .build();
                     operations.add(operation);
-                    addIMAddresses(elementIv.getInstantMessageAddresses());
+                    addImAddresses(elementIv.getInstantMessageAddresses());
                     addPhoneNumbers(elementIv.getPhoneNumbers());
                     addStructuredName(elementIv);
                     addImageInfo(elementIv.getImageData());
@@ -411,8 +425,8 @@ public class ContactsUtils {
             byte[] bytes = Base64.decode(imageData, 0);
             ContentProviderOperation var10000 = ContentProviderOperation.newInsert(DATA_URI)
                     .withValueBackReference(RAW_CONTACT_ID, rawContactInsertIndex)
-                    .withValue(MIME_TYPE, "vnd.android.cursor.item/photo")
-                    .withValue("data15", bytes)
+                    .withValue(MIME_TYPE, Photo.CONTENT_ITEM_TYPE)
+                    .withValue(Photo.PHOTO, bytes)
                     .withYieldAllowed(true)
                     .build();
             if (var10000 != null) {
@@ -430,12 +444,12 @@ public class ContactsUtils {
                     ContactsBackupBean.ContactsBean.SocialProfilesBean.SocialBean var10002 = elementIv.getSocial();
                     ContentProviderOperation var14 = ContentProviderOperation.newInsert(DATA_URI)
                             .withValueBackReference(RAW_CONTACT_ID, rawContactInsertIndex)
-                            .withValue(MIME_TYPE, "vnd.android.cursor.item/im")
-                            .withValue("data2", 2)
-                            .withValue("data5", -1)
-                            .withValue("data1", var10002 != null ? var10002.getUrlString() : null)
-                            .withValue("data6", elementIv.getDisplayLabel())
-                            .withValue("data3", elementIv.getDisplayLabel())
+                            .withValue(MIME_TYPE, Im.CONTENT_ITEM_TYPE)
+                            .withValue(Im.TYPE, Im.TYPE_WORK)
+                            .withValue(Im.PROTOCOL, Im.PROTOCOL_CUSTOM)
+                            .withValue(Im.DATA, var10002 != null ? var10002.getUrlString() : null)
+                            .withValue(Im.CUSTOM_PROTOCOL, elementIv.getDisplayLabel())
+                            .withValue(Im.LABEL, elementIv.getDisplayLabel())
                             .withYieldAllowed(true)
                             .build();
                     if (var14 != null) {
@@ -480,10 +494,10 @@ public class ContactsUtils {
                     var10003 = elementIv.getDate();
                     ContentProviderOperation var15 = ContentProviderOperation.newInsert(DATA_URI)
                             .withValueBackReference(RAW_CONTACT_ID, rawContactInsertIndex)
-                            .withValue(MIME_TYPE, "vnd.android.cursor.item/contact_event")
-                            .withValue("data2", ContactsConverter.getEventType(var10000))
-                            .withValue("data1", var10002.append(var10003 != null ? var10003.getDay() : 0).toString())
-                            .withValue("data3", ContactsConverter.getDisplayLabel(var10000, elementIv.getDisplayLabel()))
+                            .withValue(MIME_TYPE, Event.CONTENT_ITEM_TYPE)
+                            .withValue(Event.TYPE, ContactsConverter.getEventType(var10000))
+                            .withValue(Event.START_DATE, var10002.append(var10003 != null ? var10003.getDay() : 0).toString())
+                            .withValue(Event.LABEL, ContactsConverter.getDisplayLabel(var10000, elementIv.getDisplayLabel()))
                             .withYieldAllowed(true)
                             .build();
                     if (var15 != null) {
@@ -500,8 +514,8 @@ public class ContactsUtils {
         if (birthday != null) {
             operation = ContentProviderOperation.newInsert(DATA_URI)
                     .withValueBackReference(RAW_CONTACT_ID, rawContactInsertIndex)
-                    .withValue(MIME_TYPE, "vnd.android.cursor.item/contact_event")
-                    .withValue("data2", 3)
+                    .withValue(MIME_TYPE, Event.CONTENT_ITEM_TYPE)
+                    .withValue(Event.TYPE, Event.TYPE_BIRTHDAY)
                     .withValue("data1", TimeUtils.getNowString((new SimpleDateFormat("yyyy", Locale.getDefault()))) + "-" + birthday.getMonth() + "-" + birthday.getDay())
                     .withYieldAllowed(true)
                     .build();
@@ -513,10 +527,10 @@ public class ContactsUtils {
         if (nonGregorianBirthday != null) {
             operation = ContentProviderOperation.newInsert(DATA_URI)
                     .withValueBackReference(RAW_CONTACT_ID, rawContactInsertIndex)
-                    .withValue(MIME_TYPE, "vnd.android.cursor.item/contact_event")
-                    .withValue("data2", 0)
-                    .withValue("data1", "" + nonGregorianBirthday.getYear() + "-" + nonGregorianBirthday.getMonth() + "-" + nonGregorianBirthday.getDay())
-                    .withValue("data3", "农历生日")
+                    .withValue(MIME_TYPE, Event.CONTENT_ITEM_TYPE)
+                    .withValue(Event.TYPE, Event.TYPE_CUSTOM)
+                    .withValue(Event.START_DATE, "" + nonGregorianBirthday.getYear() + "-" + nonGregorianBirthday.getMonth() + "-" + nonGregorianBirthday.getDay())
+                    .withValue(Event.LABEL, "农历生日")
                     .withYieldAllowed(true)
                     .build();
             if (operation != null) {
@@ -535,10 +549,10 @@ public class ContactsUtils {
                     ContactsBackupBean.ContactsBean.ContactRelationsBean.RelationBean var10002 = elementIv.getRelation();
                     ContentProviderOperation var14 = ContentProviderOperation.newInsert(DATA_URI)
                             .withValueBackReference(RAW_CONTACT_ID, rawContactInsertIndex)
-                            .withValue(MIME_TYPE, "vnd.android.cursor.item/relation")
-                            .withValue("data2", ContactsConverter.getRelationType(var10000))
-                            .withValue("data1", var10002 != null ? var10002.getName() : null)
-                            .withValue("data3", ContactsConverter.getDisplayLabel(var10000, elementIv.getDisplayLabel()))
+                            .withValue(MIME_TYPE, Relation.CONTENT_ITEM_TYPE)
+                            .withValue(Relation.TYPE, ContactsConverter.getRelationType(var10000))
+                            .withValue(Relation.DATA, var10002 != null ? var10002.getName() : null)
+                            .withValue(Relation.LABEL, ContactsConverter.getDisplayLabel(var10000, elementIv.getDisplayLabel()))
                             .withYieldAllowed(true)
                             .build();
                     if (var14 != null) {
@@ -553,14 +567,15 @@ public class ContactsUtils {
     private static void addOrganizationInfo(ContactsBackupBean.ContactsBean it) {
         ContentProviderOperation operation = ContentProviderOperation.newInsert(DATA_URI)
                 .withValueBackReference(RAW_CONTACT_ID, rawContactInsertIndex)
-                .withValue(MIME_TYPE, "vnd.android.cursor.item/organization")
-                .withValue("data2", 2).withValue("data1", it.getOrganizationName())
-                .withValue("data5", it.getDepartmentName())
-                .withValue("data4", it.getJobTitle())
-                .withValue("data7", "")
-                .withValue("data6", "")
-                .withValue("data9", "")
-                .withValue("data8", it.getPhoneticOrganizationName())
+                .withValue(MIME_TYPE, Organization.CONTENT_ITEM_TYPE)
+                .withValue(Organization.TYPE, Organization.TYPE_OTHER)
+                .withValue(Organization.COMPANY, it.getOrganizationName())
+                .withValue(Organization.DEPARTMENT, it.getDepartmentName())
+                .withValue(Organization.TITLE, it.getJobTitle())
+                .withValue(Organization.SYMBOL, "")
+                .withValue(Organization.JOB_DESCRIPTION, "")
+                .withValue(Organization.OFFICE_LOCATION, "")
+                .withValue(Organization.PHONETIC_NAME, it.getPhoneticOrganizationName())
                 .withYieldAllowed(true).build();
         if (operation != null) {
             operations.add(operation);
@@ -575,10 +590,10 @@ public class ContactsUtils {
                 if (var10000 != null) {
                     ContentProviderOperation operation = ContentProviderOperation.newInsert(DATA_URI)
                             .withValueBackReference(RAW_CONTACT_ID, rawContactInsertIndex)
-                            .withValue(MIME_TYPE, "vnd.android.cursor.item/email_v2")
-                            .withValue("data2", ContactsConverter.getEmailType(var10000))
-                            .withValue("data1", elementIv.getEmail())
-                            .withValue("data3", ContactsConverter.getDisplayLabel(var10000, elementIv.getDisplayLabel()))
+                            .withValue(MIME_TYPE, Email.CONTENT_ITEM_TYPE)
+                            .withValue(Email.TYPE, ContactsConverter.getEmailType(var10000))
+                            .withValue(Email.ADDRESS, elementIv.getEmail())
+                            .withValue(Email.LABEL, ContactsConverter.getDisplayLabel(var10000, elementIv.getDisplayLabel()))
                             .withYieldAllowed(true)
                             .build();
                     if (operation != null) {
@@ -594,8 +609,8 @@ public class ContactsUtils {
         if (note != null) {
             ContentProviderOperation operation = ContentProviderOperation.newInsert(DATA_URI)
                     .withValueBackReference(RAW_CONTACT_ID, rawContactInsertIndex)
-                    .withValue(MIME_TYPE, "vnd.android.cursor.item/note")
-                    .withValue("data1", note)
+                    .withValue(MIME_TYPE, Note.CONTENT_ITEM_TYPE)
+                    .withValue(Note.NOTE, note)
                     .withYieldAllowed(true)
                     .build();
 
@@ -610,8 +625,8 @@ public class ContactsUtils {
         if (nickname != null) {
             ContentProviderOperation operation = ContentProviderOperation.newInsert(DATA_URI)
                     .withValueBackReference(RAW_CONTACT_ID, rawContactInsertIndex)
-                    .withValue(MIME_TYPE, "vnd.android.cursor.item/nickname")
-                    .withValue("data1", nickname)
+                    .withValue(MIME_TYPE, Nickname.CONTENT_ITEM_TYPE)
+                    .withValue(Nickname.NAME, nickname)
                     .withYieldAllowed(true)
                     .build();
             if (operation != null) {
@@ -629,10 +644,10 @@ public class ContactsUtils {
                 if (var10000 != null) {
                     ContentProviderOperation operation = ContentProviderOperation.newInsert(DATA_URI)
                             .withValueBackReference(RAW_CONTACT_ID, rawContactInsertIndex)
-                            .withValue(MIME_TYPE, "vnd.android.cursor.item/website")
-                            .withValue("data2", ContactsConverter.getUrlType(var10000))
-                            .withValue("data1", elementIv.getUrl())
-                            .withValue("data3", ContactsConverter.getDisplayLabel(var10000, elementIv.getDisplayLabel()))
+                            .withValue(MIME_TYPE, Website.CONTENT_ITEM_TYPE)
+                            .withValue(Website.TYPE, ContactsConverter.getUrlType(var10000))
+                            .withValue(Website.URL, elementIv.getUrl())
+                            .withValue(Website.LABEL, ContactsConverter.getDisplayLabel(var10000, elementIv.getDisplayLabel()))
                             .withYieldAllowed(true)
                             .build();
                     if (operation != null) {
@@ -652,15 +667,15 @@ public class ContactsUtils {
                 if (var10000 != null) {
                     ContentProviderOperation operation = ContentProviderOperation.newInsert(DATA_URI)
                             .withValueBackReference(RAW_CONTACT_ID, rawContactInsertIndex)
-                            .withValue(MIME_TYPE, "vnd.android.cursor.item/postal-address_v2")
-                            .withValue("data2", ContactsConverter.getPostalAddresseType(elementIv.getLabel()))
-                            .withValue("data10", var10000.getCountry())
-                            .withValue("data7", var10000.getCity())
-                            .withValue("data8", var10000.getSubLocality())
-                            .withValue("data4", var10000.getStreet())
-                            .withValue("data9", var10000.getPostalCode())
-                            .withValue("data1", var10000.getCountry() + var10000.getState() + var10000.getCity() + var10000.getSubLocality() + var10000.getStreet())
-                            .withValue("data3", ContactsConverter.getDisplayLabel(elementIv.getLabel(), elementIv.getDisplayLabel()))
+                            .withValue(MIME_TYPE, StructuredPostal.CONTENT_ITEM_TYPE)
+                            .withValue(StructuredPostal.TYPE, ContactsConverter.getPostalAddresseType(elementIv.getLabel()))
+                            .withValue(StructuredPostal.COUNTRY, var10000.getCountry())
+                            .withValue(StructuredPostal.CITY, var10000.getCity())
+                            .withValue(StructuredPostal.REGION, var10000.getSubLocality())
+                            .withValue(StructuredPostal.STREET, var10000.getStreet())
+                            .withValue(StructuredPostal.POSTCODE, var10000.getPostalCode())
+                            .withValue(StructuredPostal.FORMATTED_ADDRESS, var10000.getCountry() + var10000.getState() + var10000.getCity() + var10000.getSubLocality() + var10000.getStreet())
+                            .withValue(StructuredPostal.LABEL, ContactsConverter.getDisplayLabel(elementIv.getLabel(), elementIv.getDisplayLabel()))
                             .withYieldAllowed(true)
                             .build();
                     if (operation != null) {
@@ -675,17 +690,18 @@ public class ContactsUtils {
     private static void addStructuredName(ContactsBackupBean.ContactsBean it) {
         ContentProviderOperation operation = ContentProviderOperation.newInsert(DATA_URI)
                 .withValueBackReference(RAW_CONTACT_ID, rawContactInsertIndex)
-                .withValue(MIME_TYPE, "vnd.android.cursor.item/name")
-                .withValue("data1", (it.getFamilyName() + it.getGivenName()))
-                .withValue("data3", it.getFamilyName())
-                .withValue("data9", it.getPhoneticFamilyName())
-                .withValue("data5", it.getMiddleName())
-                .withValue("data8", it.getPhoneticMiddleName())
-                .withValue("data2", it.getGivenName())
-                .withValue("data7", it.getPhoneticGivenName())
-                .withValue("data10", 3).withValue("data11", 3)
-                .withValue("data4", it.getNamePrefix())
-                .withValue("data6", it.getNameSuffix())
+                .withValue(MIME_TYPE, StructuredName.CONTENT_ITEM_TYPE)
+                .withValue(StructuredName.DISPLAY_NAME, (it.getFamilyName() + it.getGivenName()))
+                .withValue(StructuredName.FAMILY_NAME, it.getFamilyName())
+                .withValue(StructuredName.PHONETIC_FAMILY_NAME, it.getPhoneticFamilyName())
+                .withValue(StructuredName.MIDDLE_NAME, it.getMiddleName())
+                .withValue(StructuredName.PHONETIC_MIDDLE_NAME, it.getPhoneticMiddleName())
+                .withValue(StructuredName.GIVEN_NAME, it.getGivenName())
+                .withValue(StructuredName.PHONETIC_GIVEN_NAME, it.getPhoneticGivenName())
+                .withValue(StructuredName.FULL_NAME_STYLE, ContactsContract.FullNameStyle.CHINESE)
+                .withValue(StructuredName.PHONETIC_NAME_STYLE, ContactsContract.PhoneticNameStyle.PINYIN)
+                .withValue(StructuredName.PREFIX, it.getNamePrefix())
+                .withValue(StructuredName.SUFFIX, it.getNameSuffix())
                 .withYieldAllowed(true)
                 .build();
         if (operation != null) {
@@ -698,9 +714,15 @@ public class ContactsUtils {
             for (ContactsBackupBean.ContactsBean.PhoneNumbersBean elementIv : it) {
                 String var10000 = elementIv.getLabel();
                 if (var10000 != null) {
-                    ContentProviderOperation.Builder var14 = ContentProviderOperation.newInsert(DATA_URI).withValueBackReference(RAW_CONTACT_ID, rawContactInsertIndex).withValue(MIME_TYPE, "vnd.android.cursor.item/phone_v2").withValue("data2", ContactsConverter.getPhoneType(var10000));
                     ContactsBackupBean.ContactsBean.PhoneNumbersBean.PhoneNumberBean var10002 = elementIv.getPhoneNumber();
-                    ContentProviderOperation operation = var14.withValue("data1", var10002 != null ? var10002.getNumber() : null).withValue("data3", ContactsConverter.getDisplayLabel(var10000, elementIv.getDisplayLabel())).withYieldAllowed(true).build();
+                    ContentProviderOperation operation = ContentProviderOperation.newInsert(DATA_URI)
+                            .withValueBackReference(RAW_CONTACT_ID, rawContactInsertIndex)
+                            .withValue(MIME_TYPE, Phone.CONTENT_ITEM_TYPE)
+                            .withValue(Phone.TYPE, ContactsConverter.getPhoneType(var10000))
+                            .withValue(Phone.NUMBER, var10002 != null ? var10002.getNumber() : null)
+                            .withValue(Phone.LABEL, ContactsConverter.getDisplayLabel(var10000, elementIv.getDisplayLabel()))
+                            .withYieldAllowed(true)
+                            .build();
                     if (operation != null) {
                         operations.add(operation);
                     }
@@ -710,7 +732,7 @@ public class ContactsUtils {
 
     }
 
-    private static void addIMAddresses(List<ContactsBackupBean.ContactsBean.InstantMessageAddressesBean> it) {
+    private static void addImAddresses(List<ContactsBackupBean.ContactsBean.InstantMessageAddressesBean> it) {
         if (it != null) {
 
             for (ContactsBackupBean.ContactsBean.InstantMessageAddressesBean elementIv : it) {
@@ -719,11 +741,12 @@ public class ContactsUtils {
                     ContactsBackupBean.ContactsBean.InstantMessageAddressesBean.ServiceBean service = elementIv.getService();
                     ContentProviderOperation operation = ContentProviderOperation.newInsert(DATA_URI)
                             .withValueBackReference(RAW_CONTACT_ID, rawContactInsertIndex)
-                            .withValue(MIME_TYPE, "vnd.android.cursor.item/im")
-                            .withValue("data2", 2)
-                            .withValue("data5", ContactsConverter.getImProtocol(var10000)).withValue("data1", service != null ? service.getUsername() : null)
-                            .withValue("data6", elementIv.getDisplayLabel())
-                            .withValue("data3", ContactsConverter.getDisplayLabel(var10000, elementIv.getDisplayLabel()))
+                            .withValue(MIME_TYPE, Im.CONTENT_ITEM_TYPE)
+                            .withValue(Im.TYPE, Im.TYPE_WORK)
+                            .withValue(Im.PROTOCOL, ContactsConverter.getImProtocol(var10000))
+                            .withValue(Im.DATA, service != null ? service.getUsername() : null)
+                            .withValue(Im.CUSTOM_PROTOCOL, elementIv.getDisplayLabel())
+                            .withValue(Im.LABEL, ContactsConverter.getDisplayLabel(var10000, elementIv.getDisplayLabel()))
                             .withYieldAllowed(true)
                             .build();
                     if (operation != null) {

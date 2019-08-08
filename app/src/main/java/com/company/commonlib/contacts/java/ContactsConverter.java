@@ -1,8 +1,14 @@
 package com.company.commonlib.contacts.java;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static android.provider.ContactsContract.CommonDataKinds.Email;
+import static android.provider.ContactsContract.CommonDataKinds.Event;
+import static android.provider.ContactsContract.CommonDataKinds.Im;
+import static android.provider.ContactsContract.CommonDataKinds.Phone;
+import static android.provider.ContactsContract.CommonDataKinds.Relation;
+import static android.provider.ContactsContract.CommonDataKinds.StructuredPostal;
+import static android.provider.ContactsContract.CommonDataKinds.Website;
 
 /**
  * @author dinglaihong
@@ -10,988 +16,620 @@ import org.jetbrains.annotations.Nullable;
  * @date 2019/8/7
  * @des
  */
-public class ContactsConverter {
-    @NotNull
-    public static final String MOTHER = "_$!<Mother>!$_";
-    @NotNull
-    public static final String FATHER = "_$!<Father>!$_";
-    @NotNull
-    public static final String PARENT = "_$!<Parent>!$_";
-    @NotNull
-    public static final String BROTHER = "_$!<Brother>!$_";
-    @NotNull
-    public static final String SISTER = "_$!<Sister>!$_";
-    @NotNull
-    public static final String SON = "_$!<Son>!$_";
-    @NotNull
-    public static final String DAUGHTER = "_$!<Daughter>!$_";
-    @NotNull
-    public static final String CHILD = "_$!<Child>!$_";
-    @NotNull
-    public static final String FRIEND = "_$!<Friend>!$_";
-    @NotNull
-    public static final String SPOUSE = "_$!<Spouse>!$_";
-    @NotNull
-    public static final String PARTNER = "_$!<Partner>!$_";
-    @NotNull
-    public static final String ASSISTANT = "_$!<Assistant>!$_";
-    @NotNull
-    public static final String MANAGER = "_$!<Manager>!$_";
-    @NotNull
-    public static final String OTHER = "_$!<Other>!$_";
-    @NotNull
-    public static final String HOME = "_$!<Home>!$_";
-    @NotNull
-    public static final String WORK = "_$!<Work>!$_";
-    @NotNull
-    public static final String MOBILE = "_$!<Mobile>!$_";
-    @NotNull
-    public static final String MAIN = "_$!<Main>!$_";
-    @NotNull
-    public static final String HOME_FAX = "_$!<HomeFAX>!$_";
-    @NotNull
-    public static final String WORK_FAX = "_$!<WorkFAX>!$_";
-    @NotNull
-    public static final String OTHER_FAX = "_$!<OtherFAX>!$_";
-    @NotNull
-    public static final String PAGER = "_$!<Pager>!$_";
-    @NotNull
-    public static final String WORK_PAGER = "_$!<WorkPager>!$_";
-    @NotNull
-    public static final String HOMEPAGE = "_$!<HomePage>!$_";
-    @NotNull
-    public static final String ANNIVERSARY = "_$!<Anniversary>!$_";
-    @NotNull
-    public static final String CUSTOM = "_$!<Custom>!$_";
-    @NotNull
-    public static final String BIRTHDAY = "_$!<Birthday>!$_";
-    @NotNull
-    public static final String BLOG = "_$!<Blog>!$_";
-    @NotNull
-    public static final String FTP = "_$!<Ftp>!$_";
-    @NotNull
-    public static final String PROFILE = "_$!<Profile>!$_";
-    @NotNull
-    public static final String I_CLOUD = "iCloud";
-    @NotNull
-    public static final String IPHONE = "iPhone";
-    @NotNull
-    public static final String IM_QQ = "QQ";
-    @NotNull
-    public static final String IM_SKYPE = "Skype";
-    @NotNull
-    public static final String IM_ICQ = "ICQ";
-    @NotNull
-    public static final String IM_JABBER = "Jabber";
-    @NotNull
-    public static final String IM_MSN = "MSN";
-    @NotNull
-    public static final String IM_NET_MEETING = "NETMEETING";
-    @NotNull
-    public static final String IM_YAHOO = "Yahoo";
-    @NotNull
-    public static final String IM_AIM = "AIM";
-    @NotNull
-    public static final String IM_GOOGLE_TALK = "GOOGLE_TALK";
-    @NotNull
-    public static final String IM_CUSTOM = "Custom";
-    @NotNull
-    public static final String LABEL_DEFULT = "自定义";
+@SuppressWarnings("ALL")
+class ContactsConverter {
+    private static final String MOTHER = "_$!<Mother>!$_";
+    private static final String FATHER = "_$!<Father>!$_";
+    private static final String PARENT = "_$!<Parent>!$_";
+    private static final String BROTHER = "_$!<Brother>!$_";
+    private static final String SISTER = "_$!<Sister>!$_";
+    private static final String SON = "_$!<Son>!$_";
+    private static final String DAUGHTER = "_$!<Daughter>!$_";
+    private static final String CHILD = "_$!<Child>!$_";
+    private static final String FRIEND = "_$!<Friend>!$_";
+    private static final String SPOUSE = "_$!<Spouse>!$_";
+    private static final String PARTNER = "_$!<Partner>!$_";
+    private static final String ASSISTANT = "_$!<Assistant>!$_";
+    private static final String MANAGER = "_$!<Manager>!$_";
+    private static final String OTHER = "_$!<Other>!$_";
+    private static final String HOME = "_$!<Home>!$_";
+    private static final String WORK = "_$!<Work>!$_";
+    private static final String MOBILE = "_$!<Mobile>!$_";
+    private static final String MAIN = "_$!<Main>!$_";
+    private static final String HOME_FAX = "_$!<HomeFAX>!$_";
+    private static final String WORK_FAX = "_$!<WorkFAX>!$_";
+    private static final String OTHER_FAX = "_$!<OtherFAX>!$_";
+    private static final String PAGER = "_$!<Pager>!$_";
+    private static final String WORK_PAGER = "_$!<WorkPager>!$_";
+    private static final String HOMEPAGE = "_$!<HomePage>!$_";
+    private static final String ANNIVERSARY = "_$!<Anniversary>!$_";
+    private static final String CUSTOM = "_$!<Custom>!$_";
+    private static final String BIRTHDAY = "_$!<Birthday>!$_";
+    private static final String BLOG = "_$!<Blog>!$_";
+    private static final String FTP = "_$!<Ftp>!$_";
+    private static final String PROFILE = "_$!<Profile>!$_";
+    private static final String I_CLOUD = "iCloud";
+    private static final String IPHONE = "iPhone";
+    private static final String IM_QQ = "QQ";
+    private static final String IM_SKYPE = "Skype";
+    private static final String IM_ICQ = "ICQ";
+    private static final String IM_JABBER = "Jabber";
+    private static final String IM_MSN = "MSN";
+    private static final String IM_NET_MEETING = "NETMEETING";
+    private static final String IM_YAHOO = "Yahoo";
+    private static final String IM_AIM = "AIM";
+    private static final String IM_GOOGLE_TALK = "GOOGLE_TALK";
+    private static final String IM_CUSTOM = "Custom";
+    private static final String LABEL_DEFULT = "自定义";
 
 
     @Nullable
-    public static String getDisplayLabel(@Nullable String label, @Nullable String displayLabel) {
-        String var10000;
-        label267:
-        {
-            if (label != null) {
-                switch (label.hashCode()) {
-                    case -2083811644:
-                        if (label.equals("Jabber")) {
-                            var10000 = "Jabber";
-                            return var10000;
-                        }
-                        break;
-                    case -1977658070:
-                        if (label.equals("_$!<WorkFAX>!$_")) {
-                            var10000 = "工作传真";
-                            return var10000;
-                        }
-                        break;
-                    case -1739405694:
-                        if (label.equals("_$!<Sister>!$_")) {
-                            var10000 = "姐妹";
-                            return var10000;
-                        }
-                        break;
-                    case -1486085624:
-                        if (label.equals("_$!<Parent>!$_")) {
-                            var10000 = "父母";
-                            return var10000;
-                        }
-                        break;
-                    case -1223702708:
-                        if (label.equals("iCloud")) {
-                            var10000 = "iCloud";
-                            return var10000;
-                        }
-                        break;
-                    case -1218486495:
-                        if (label.equals("_$!<Pager>!$_")) {
-                            var10000 = "传呼机";
-                            return var10000;
-                        }
-                        break;
-                    case -1211816315:
-                        if (label.equals("iPhone")) {
-                            var10000 = "iPhone";
-                            return var10000;
-                        }
-                        break;
-                    case -1074447172:
-                        if (label.equals("_$!<Assistant>!$_")) {
-                            var10000 = "助理";
-                            return var10000;
-                        }
-                        break;
-                    case -826844308:
-                        if (label.equals("_$!<HomePage>!$_")) {
-                            var10000 = "主页";
-                            return var10000;
-                        }
-                        break;
-                    case -576261634:
-                        if (label.equals("NETMEETING")) {
-                            var10000 = "NETMEETING";
-                            return var10000;
-                        }
-                        break;
-                    case -278160451:
-                        if (label.equals("_$!<Home>!$_")) {
-                            var10000 = "家庭";
-                            return var10000;
-                        }
-                        break;
-                    case -83559056:
-                        if (label.equals("_$!<Son>!$_")) {
-                            var10000 = "儿子";
-                            return var10000;
-                        }
-                        break;
-                    case -37519002:
-                        if (label.equals("_$!<Daughter>!$_")) {
-                            var10000 = "女儿";
-                            return var10000;
-                        }
-                        break;
-                    case 2592:
-                        if (label.equals("QQ")) {
-                            var10000 = "QQ";
-                            return var10000;
-                        }
-                        break;
-                    case 64805:
-                        if (label.equals("AIM")) {
-                            var10000 = "AIM";
-                            return var10000;
-                        }
-                        break;
-                    case 72311:
-                        if (label.equals("ICQ")) {
-                            var10000 = "ICQ";
-                            return var10000;
-                        }
-                        break;
-                    case 76648:
-                        if (label.equals("MSN")) {
-                            var10000 = "MSN";
-                            return var10000;
-                        }
-                        break;
-                    case 79959734:
-                        if (label.equals("Skype")) {
-                            var10000 = "Skype";
-                            return var10000;
-                        }
-                        break;
-                    case 85186592:
-                        if (label.equals("Yahoo")) {
-                            var10000 = "Yahoo";
-                            return var10000;
-                        }
-                        break;
-                    case 199602071:
-                        if (label.equals("_$!<Main>!$_")) {
-                            var10000 = "主要";
-                            return var10000;
-                        }
-                        break;
-                    case 230129646:
-                        if (label.equals("_$!<Other>!$_")) {
-                            var10000 = "其他";
-                            return var10000;
-                        }
-                        break;
-                    case 232335883:
-                        if (label.equals("_$!<Manager>!$_")) {
-                            var10000 = "上司";
-                            return var10000;
-                        }
-                        break;
-                    case 242877679:
-                        if (label.equals("_$!<Work>!$_")) {
-                            var10000 = "工作";
-                            return var10000;
-                        }
-                        break;
-                    case 932638208:
-                        if (label.equals("_$!<Mobile>!$_")) {
-                            var10000 = "手机";
-                            return var10000;
-                        }
-                        break;
-                    case 1150238830:
-                        if (label.equals("_$!<Anniversary>!$_")) {
-                            var10000 = "纪念日";
-                            return var10000;
-                        }
-                        break;
-                    case 1162551201:
-                        if (label.equals("_$!<Mother>!$_")) {
-                            var10000 = "母亲";
-                            return var10000;
-                        }
-                        break;
-                    case 1167782310:
-                        if (label.equals("_$!<Partner>!$_")) {
-                            var10000 = "伴侣";
-                            return var10000;
-                        }
-                        break;
-                    case 1296894460:
-                        if (label.equals("_$!<Friend>!$_")) {
-                            var10000 = "朋友";
-                            return var10000;
-                        }
-                        break;
-                    case 1388314227:
-                        if (label.equals("_$!<Spouse>!$_")) {
-                            var10000 = "配偶";
-                            return var10000;
-                        }
-                        break;
-                    case 1471867215:
-                        if (label.equals("_$!<Custom>!$_")) {
-                            break label267;
-                        }
-                        break;
-                    case 1606876574:
-                        if (label.equals("_$!<Brother>!$_")) {
-                            var10000 = "兄弟";
-                            return var10000;
-                        }
-                        break;
-                    case 1847791346:
-                        if (label.equals("GOOGLE_TALK")) {
-                            var10000 = "GOOGLE_TALK";
-                            return var10000;
-                        }
-                        break;
-                    case 2029746065:
-                        if (label.equals("Custom")) {
-                            break label267;
-                        }
-                        break;
-                    case 2072704442:
-                        if (label.equals("_$!<Father>!$_")) {
-                            var10000 = "父亲";
-                            return var10000;
-                        }
-                        break;
-                    case 2080837626:
-                        if (label.equals("_$!<Child>!$_")) {
-                            var10000 = "子女";
-                            return var10000;
-                        }
-                        break;
-                    case 2082186140:
-                        if (label.equals("_$!<HomeFAX>!$_")) {
-                            var10000 = "住宅传真";
-                            return var10000;
-                        }
-                }
-            }
-
-            var10000 = displayLabel;
-            return var10000;
+    static String getDisplayLabel(@Nullable String label, @Nullable String displayLabel) {
+        String display;
+        switch (label != null ? label : "") {
+            case IM_JABBER:
+                display = "Jabber";
+                break;
+            case WORK_FAX:
+                display = "工作传真";
+                break;
+            case SISTER:
+                display = "姐妹";
+                break;
+            case PARENT:
+                display = "父母";
+                break;
+            case I_CLOUD:
+                display = "iCloud";
+                break;
+            case PAGER:
+                display = "传呼机";
+                break;
+            case IPHONE:
+                display = "iPhone";
+                break;
+            case ASSISTANT:
+                display = "助理";
+                break;
+            case HOMEPAGE:
+                display = "主页";
+                break;
+            case IM_NET_MEETING:
+                display = "NETMEETING";
+                break;
+            case HOME:
+                display = "家庭";
+                break;
+            case SON:
+                display = "儿子";
+                break;
+            case DAUGHTER:
+                display = "女儿";
+                break;
+            case IM_QQ:
+                display = "QQ";
+                break;
+            case IM_AIM:
+                display = "AIM";
+                break;
+            case IM_ICQ:
+                display = "ICQ";
+                break;
+            case IM_MSN:
+                display = "MSN";
+                break;
+            case IM_SKYPE:
+                display = "Skype";
+                break;
+            case IM_YAHOO:
+                display = "Yahoo";
+                break;
+            case MAIN:
+                display = "主要";
+                break;
+            case OTHER:
+                display = "其他";
+                break;
+            case MANAGER:
+                display = "上司";
+                break;
+            case WORK:
+                display = "工作";
+                break;
+            case MOBILE:
+                display = "手机";
+                break;
+            case ANNIVERSARY:
+                display = "纪念日";
+                break;
+            case MOTHER:
+                display = "母亲";
+                break;
+            case PARTNER:
+                display = "伴侣";
+                break;
+            case FRIEND:
+                display = "朋友";
+                break;
+            case SPOUSE:
+                display = "配偶";
+                break;
+            case BROTHER:
+                display = "兄弟";
+                break;
+            case IM_GOOGLE_TALK:
+                display = "GOOGLE_TALK";
+                break;
+            case FATHER:
+                display = "父亲";
+                break;
+            case CHILD:
+                display = "子女";
+                break;
+            case HOME_FAX:
+                display = "住宅传真";
+                break;
+            case CUSTOM:
+            case IM_CUSTOM:
+            default:
+                display = displayLabel;
+                break;
         }
-
-        var10000 = displayLabel;
-        return var10000;
+        return display;
     }
 
-    public static int getRelationType(@Nullable String label) {
+    static int getRelationType(String label) {
         byte var10000;
-        if (label != null) {
-            switch (label.hashCode()) {
-                case -1739405694:
-                    if (label.equals("_$!<Sister>!$_")) {
-                        var10000 = 13;
-                        return var10000;
-                    }
-                    break;
-                case -1486085624:
-                    if (label.equals("_$!<Parent>!$_")) {
-                        var10000 = 9;
-                        return var10000;
-                    }
-                    break;
-                case -1074447172:
-                    if (label.equals("_$!<Assistant>!$_")) {
-                        var10000 = 1;
-                        return var10000;
-                    }
-                    break;
-                case -83559056:
-                    if (label.equals("_$!<Son>!$_")) {
-                        var10000 = 0;
-                        return var10000;
-                    }
-                    break;
-                case -37519002:
-                    if (label.equals("_$!<Daughter>!$_")) {
-                        var10000 = 0;
-                        return var10000;
-                    }
-                    break;
-                case 230129646:
-                    if (label.equals("_$!<Other>!$_")) {
-                        var10000 = 0;
-                        return var10000;
-                    }
-                    break;
-                case 232335883:
-                    if (label.equals("_$!<Manager>!$_")) {
-                        var10000 = 7;
-                        return var10000;
-                    }
-                    break;
-                case 1162551201:
-                    if (label.equals("_$!<Mother>!$_")) {
-                        var10000 = 8;
-                        return var10000;
-                    }
-                    break;
-                case 1167782310:
-                    if (label.equals("_$!<Partner>!$_")) {
-                        var10000 = 10;
-                        return var10000;
-                    }
-                    break;
-                case 1296894460:
-                    if (label.equals("_$!<Friend>!$_")) {
-                        var10000 = 6;
-                        return var10000;
-                    }
-                    break;
-                case 1388314227:
-                    if (label.equals("_$!<Spouse>!$_")) {
-                        var10000 = 14;
-                        return var10000;
-                    }
-                    break;
-                case 1606876574:
-                    if (label.equals("_$!<Brother>!$_")) {
-                        var10000 = 2;
-                        return var10000;
-                    }
-                    break;
-                case 2072704442:
-                    if (label.equals("_$!<Father>!$_")) {
-                        var10000 = 5;
-                        return var10000;
-                    }
-                    break;
-                case 2080837626:
-                    if (label.equals("_$!<Child>!$_")) {
-                        var10000 = 3;
-                        return var10000;
-                    }
-            }
+        switch (label != null ? label : "") {
+            case SISTER:
+                var10000 = Relation.TYPE_SISTER;
+                break;
+            case PARENT:
+                var10000 = Relation.TYPE_PARENT;
+                break;
+            case ASSISTANT:
+                var10000 = Relation.TYPE_ASSISTANT;
+                break;
+            case MANAGER:
+                var10000 = Relation.TYPE_MANAGER;
+                break;
+            case MOTHER:
+                var10000 = Relation.TYPE_MOTHER;
+                break;
+            case PARTNER:
+                var10000 = Relation.TYPE_PARTNER;
+                break;
+            case FRIEND:
+                var10000 = Relation.TYPE_FRIEND;
+                break;
+            case SPOUSE:
+                var10000 = Relation.TYPE_SPOUSE;
+                break;
+            case BROTHER:
+                var10000 = Relation.TYPE_BROTHER;
+                break;
+            case FATHER:
+                var10000 = Relation.TYPE_FATHER;
+                break;
+            case CHILD:
+                var10000 = Relation.TYPE_CHILD;
+                break;
+            case SON:
+            case DAUGHTER:
+            case OTHER:
+            default:
+                var10000 = Relation.TYPE_CUSTOM;
+                break;
         }
-
-        var10000 = 0;
         return var10000;
     }
 
-    @NotNull
-    public static String getRelationLabel(int type) {
+    static String getRelationLabel(int type) {
         String var10000;
         switch (type) {
-            case 0:
-                var10000 = "_$!<Mother>!$_";
+            case Relation.TYPE_ASSISTANT:
+                var10000 = ASSISTANT;
                 break;
-            case 1:
-                var10000 = "_$!<Assistant>!$_";
+            case Relation.TYPE_BROTHER:
+                var10000 = BROTHER;
                 break;
-            case 2:
-                var10000 = "_$!<Brother>!$_";
+            case Relation.TYPE_CHILD:
+                var10000 = CHILD;
                 break;
-            case 3:
-                var10000 = "_$!<Child>!$_";
+            case Relation.TYPE_FATHER:
+                var10000 = FATHER;
                 break;
-            case 4:
-            case 11:
-            case 12:
+            case Relation.TYPE_FRIEND:
+                var10000 = FRIEND;
+                break;
+            case Relation.TYPE_MANAGER:
+                var10000 = MANAGER;
+                break;
+            case Relation.TYPE_MOTHER:
+                var10000 = MOTHER;
+                break;
+            case Relation.TYPE_PARENT:
+                var10000 = PARENT;
+                break;
+            case Relation.TYPE_PARTNER:
+                var10000 = PARTNER;
+                break;
+            case Relation.TYPE_SISTER:
+                var10000 = SISTER;
+                break;
+            case Relation.TYPE_SPOUSE:
+                var10000 = SPOUSE;
+                break;
             default:
-                var10000 = "自定义";
+                var10000 = LABEL_DEFULT;
                 break;
-            case 5:
-                var10000 = "_$!<Father>!$_";
-                break;
-            case 6:
-                var10000 = "_$!<Friend>!$_";
-                break;
-            case 7:
-                var10000 = "_$!<Manager>!$_";
-                break;
-            case 8:
-                var10000 = "_$!<Mother>!$_";
-                break;
-            case 9:
-                var10000 = "_$!<Parent>!$_";
-                break;
-            case 10:
-                var10000 = "_$!<Partner>!$_";
-                break;
-            case 13:
-                var10000 = "_$!<Sister>!$_";
-                break;
-            case 14:
-                var10000 = "_$!<Spouse>!$_";
         }
 
         return var10000;
     }
 
-    public static int getPhoneType(@Nullable String label) {
-        byte var10000;
+    static int getPhoneType(String label) {
+        byte var10000 = Phone.TYPE_CUSTOM;
         if (label != null) {
-            switch (label.hashCode()) {
-                case -1977658070:
-                    if (label.equals("_$!<WorkFAX>!$_")) {
-                        var10000 = 4;
-                        return var10000;
-                    }
+            switch (label) {
+                case WORK_FAX:
+                    var10000 = Phone.TYPE_FAX_WORK;
                     break;
-                case -1493468400:
-                    if (label.equals("_$!<WorkPager>!$_")) {
-                        var10000 = 18;
-                        return var10000;
-                    }
+                case WORK_PAGER:
+                    var10000 = Phone.TYPE_WORK_PAGER;
                     break;
-                case -1218486495:
-                    if (label.equals("_$!<Pager>!$_")) {
-                        var10000 = 6;
-                        return var10000;
-                    }
+                case PAGER:
+                    var10000 = Phone.TYPE_PAGER;
                     break;
-                case -1074447172:
-                    if (label.equals("_$!<Assistant>!$_")) {
-                        var10000 = 19;
-                        return var10000;
-                    }
+                case ASSISTANT:
+                    var10000 = Phone.TYPE_ASSISTANT;
                     break;
-                case -278160451:
-                    if (label.equals("_$!<Home>!$_")) {
-                        var10000 = 1;
-                        return var10000;
-                    }
+                case HOME:
+                    var10000 = Phone.TYPE_HOME;
                     break;
-                case 199602071:
-                    if (label.equals("_$!<Main>!$_")) {
-                        var10000 = 12;
-                        return var10000;
-                    }
+                case MAIN:
+                    var10000 = Phone.TYPE_MAIN;
                     break;
-                case 230129646:
-                    if (label.equals("_$!<Other>!$_")) {
-                        var10000 = 7;
-                        return var10000;
-                    }
+                case OTHER:
+                    var10000 = Phone.TYPE_OTHER;
                     break;
-                case 242877679:
-                    if (label.equals("_$!<Work>!$_")) {
-                        var10000 = 3;
-                        return var10000;
-                    }
+                case WORK:
+                    var10000 = Phone.TYPE_WORK;
                     break;
-                case 497780171:
-                    if (label.equals("_$!<OtherFAX>!$_")) {
-                        var10000 = 13;
-                        return var10000;
-                    }
+                case OTHER_FAX:
+                    var10000 = Phone.TYPE_OTHER_FAX;
                     break;
-                case 932638208:
-                    if (label.equals("_$!<Mobile>!$_")) {
-                        var10000 = 2;
-                        return var10000;
-                    }
+                case MOBILE:
+                    var10000 = Phone.TYPE_MOBILE;
                     break;
-                case 1471867215:
-                    if (label.equals("_$!<Custom>!$_")) {
-                        var10000 = 0;
-                        return var10000;
-                    }
+                case HOME_FAX:
+                    var10000 = Phone.TYPE_FAX_HOME;
                     break;
-                case 2082186140:
-                    if (label.equals("_$!<HomeFAX>!$_")) {
-                        var10000 = 5;
-                        return var10000;
-                    }
+                case CUSTOM:
+                default:
+                    var10000 = Phone.TYPE_CUSTOM;
+
             }
         }
-
-        var10000 = 0;
         return var10000;
     }
 
-    @Nullable
-    public static String getPhoneLabel(int type) {
+    static String getPhoneLabel(int type) {
         String var10000;
         switch (type) {
-            case 0:
-                var10000 = "自定义";
+            case Phone.TYPE_HOME:
+                var10000 = HOME;
                 break;
-            case 1:
-                var10000 = "_$!<Home>!$_";
+            case Phone.TYPE_MOBILE:
+                var10000 = MOBILE;
                 break;
-            case 2:
-                var10000 = "_$!<Mobile>!$_";
+            case Phone.TYPE_WORK:
+                var10000 = WORK;
                 break;
-            case 3:
-                var10000 = "_$!<Work>!$_";
+            case Phone.TYPE_FAX_WORK:
+                var10000 = WORK_FAX;
                 break;
-            case 4:
-                var10000 = "_$!<WorkFAX>!$_";
+            case Phone.TYPE_FAX_HOME:
+                var10000 = HOME_FAX;
                 break;
-            case 5:
-                var10000 = "_$!<HomeFAX>!$_";
+            case Phone.TYPE_PAGER:
+                var10000 = PAGER;
                 break;
-            case 6:
-                var10000 = "_$!<Pager>!$_";
+            case Phone.TYPE_OTHER:
+                var10000 = OTHER;
                 break;
-            case 7:
-                var10000 = "_$!<Other>!$_";
+            case Phone.TYPE_MAIN:
+                var10000 = MAIN;
                 break;
-            case 8:
-            case 9:
-            case 10:
-            case 11:
-            case 14:
-            case 15:
-            case 16:
-            case 17:
+            case Phone.TYPE_OTHER_FAX:
+                var10000 = OTHER_FAX;
+                break;
+            case Phone.TYPE_WORK_PAGER:
+                var10000 = WORK_PAGER;
+                break;
+            case Phone.TYPE_ASSISTANT:
+                var10000 = ASSISTANT;
+                break;
+            case Phone.TYPE_CUSTOM:
             default:
-                var10000 = "自定义";
+                var10000 = LABEL_DEFULT;
                 break;
-            case 12:
-                var10000 = "_$!<Main>!$_";
-                break;
-            case 13:
-                var10000 = "_$!<OtherFAX>!$_";
-                break;
-            case 18:
-                var10000 = "_$!<WorkPager>!$_";
-                break;
-            case 19:
-                var10000 = "_$!<Assistant>!$_";
         }
 
         return var10000;
     }
 
-    public static int getImProtocol(@Nullable String label) {
-        byte var10000;
+    static int getImProtocol(String label) {
+        byte var10000 = Im.PROTOCOL_CUSTOM;
         if (label != null) {
-            switch (label.hashCode()) {
-                case -2083811644:
-                    if (label.equals("Jabber")) {
-                        var10000 = 7;
-                        return var10000;
-                    }
+            switch (label) {
+                case IM_JABBER:
+                    var10000 = Im.PROTOCOL_JABBER;
                     break;
-                case -576261634:
-                    if (label.equals("NETMEETING")) {
-                        var10000 = 8;
-                        return var10000;
-                    }
+                case IM_NET_MEETING:
+                    var10000 = Im.PROTOCOL_NETMEETING;
                     break;
-                case 2592:
-                    if (label.equals("QQ")) {
-                        var10000 = 4;
-                        return var10000;
-                    }
+                case IM_QQ:
+                    var10000 = Im.PROTOCOL_QQ;
                     break;
-                case 64805:
-                    if (label.equals("AIM")) {
-                        var10000 = 0;
-                        return var10000;
-                    }
+                case IM_AIM:
+                    var10000 = Im.PROTOCOL_AIM;
                     break;
-                case 72311:
-                    if (label.equals("ICQ")) {
-                        var10000 = 6;
-                        return var10000;
-                    }
+                case IM_ICQ:
+                    var10000 = Im.PROTOCOL_ICQ;
                     break;
-                case 76648:
-                    if (label.equals("MSN")) {
-                        var10000 = 1;
-                        return var10000;
-                    }
+                case IM_MSN:
+                    var10000 = Im.PROTOCOL_MSN;
                     break;
-                case 79959734:
-                    if (label.equals("Skype")) {
-                        var10000 = 3;
-                        return var10000;
-                    }
+                case IM_SKYPE:
+                    var10000 = Im.PROTOCOL_SKYPE;
                     break;
-                case 85186592:
-                    if (label.equals("Yahoo")) {
-                        var10000 = 2;
-                        return var10000;
-                    }
+                case IM_YAHOO:
+                    var10000 = Im.PROTOCOL_YAHOO;
                     break;
-                case 1847791346:
-                    if (label.equals("GOOGLE_TALK")) {
-                        var10000 = 5;
-                        return var10000;
-                    }
+                case IM_GOOGLE_TALK:
+                    var10000 = Im.PROTOCOL_GOOGLE_TALK;
                     break;
-                case 2029746065:
-                    if (label.equals("Custom")) {
-                        var10000 = -1;
-                        return var10000;
-                    }
+                case CUSTOM:
+                default:
+                    var10000 = Im.PROTOCOL_CUSTOM;
+                    break;
             }
         }
-
-        var10000 = -1;
         return var10000;
     }
 
-    @Nullable
-    public static String getImLabel(int type) {
+    static String getImLabel(int type) {
         String var10000;
         switch (type) {
-            case -1:
-                var10000 = "Custom";
+            case Im.PROTOCOL_AIM:
+                var10000 = IM_AIM;
                 break;
-            case 0:
-                var10000 = "AIM";
+            case Im.PROTOCOL_MSN:
+                var10000 = IM_MSN;
                 break;
-            case 1:
-                var10000 = "MSN";
+            case Im.PROTOCOL_YAHOO:
+                var10000 = IM_YAHOO;
                 break;
-            case 2:
-                var10000 = "Yahoo";
+            case Im.PROTOCOL_SKYPE:
+                var10000 = IM_SKYPE;
                 break;
-            case 3:
-                var10000 = "Skype";
+            case Im.PROTOCOL_QQ:
+                var10000 = IM_QQ;
                 break;
-            case 4:
-                var10000 = "QQ";
+            case Im.PROTOCOL_GOOGLE_TALK:
+                var10000 = IM_GOOGLE_TALK;
                 break;
-            case 5:
-                var10000 = "GOOGLE_TALK";
+            case Im.PROTOCOL_ICQ:
+                var10000 = IM_ICQ;
                 break;
-            case 6:
-                var10000 = "ICQ";
+            case Im.PROTOCOL_JABBER:
+                var10000 = IM_JABBER;
                 break;
-            case 7:
-                var10000 = "Jabber";
+            case Im.PROTOCOL_NETMEETING:
+                var10000 = IM_NET_MEETING;
                 break;
-            case 8:
-                var10000 = "NETMEETING";
-                break;
+            case Im.PROTOCOL_CUSTOM:
             default:
-                var10000 = "自定义";
+                var10000 = IM_CUSTOM;
         }
 
         return var10000;
     }
 
-    public static int getPostalAddresseType(@Nullable String label) {
+    static int getPostalAddresseType(String label) {
         byte var10000;
-        if (label != null) {
-            switch (label.hashCode()) {
-                case -278160451:
-                    if (label.equals("_$!<Home>!$_")) {
-                        var10000 = 1;
-                        return var10000;
-                    }
-                    break;
-                case 230129646:
-                    if (label.equals("_$!<Other>!$_")) {
-                        var10000 = 3;
-                        return var10000;
-                    }
-                    break;
-                case 242877679:
-                    if (label.equals("_$!<Work>!$_")) {
-                        var10000 = 2;
-                        return var10000;
-                    }
-                    break;
-                case 1471867215:
-                    if (label.equals("_$!<Custom>!$_")) {
-                        var10000 = 0;
-                        return var10000;
-                    }
-            }
+        switch (label != null ? label : "") {
+            case HOME:
+                var10000 = StructuredPostal.TYPE_HOME;
+                break;
+            case OTHER:
+                var10000 = StructuredPostal.TYPE_OTHER;
+                break;
+            case WORK:
+                var10000 = StructuredPostal.TYPE_WORK;
+                break;
+            case CUSTOM:
+            default:
+                var10000 = StructuredPostal.TYPE_CUSTOM;
+                break;
         }
-
-        var10000 = 0;
         return var10000;
     }
 
-    @NotNull
-    public static String getPostalAddressesLabel(int type) {
+    static String getPostalAddressesLabel(int type) {
         String var10000;
         switch (type) {
-            case 0:
-                var10000 = "_$!<Custom>!$_";
+            case StructuredPostal.TYPE_CUSTOM:
+                var10000 = CUSTOM;
                 break;
-            case 1:
-                var10000 = "_$!<Home>!$_";
+            case StructuredPostal.TYPE_HOME:
+                var10000 = HOME;
                 break;
-            case 2:
-                var10000 = "_$!<Work>!$_";
+            case StructuredPostal.TYPE_WORK:
+                var10000 = WORK;
                 break;
-            case 3:
-                var10000 = "_$!<Other>!$_";
+            case StructuredPostal.TYPE_OTHER:
+                var10000 = OTHER;
                 break;
             default:
-                var10000 = "自定义";
+                var10000 = LABEL_DEFULT;
         }
 
         return var10000;
     }
 
-    public static int getUrlType(@Nullable String label) {
+    static int getUrlType(String label) {
         byte var10000;
-        if (label != null) {
-            switch (label.hashCode()) {
-                case -826844308:
-                    if (label.equals("_$!<HomePage>!$_")) {
-                        var10000 = 1;
-                        return var10000;
-                    }
-                    break;
-                case -453526272:
-                    if (label.equals("_$!<Blog>!$_")) {
-                        var10000 = 2;
-                        return var10000;
-                    }
-                    break;
-                case -278160451:
-                    if (label.equals("_$!<Home>!$_")) {
-                        var10000 = 4;
-                        return var10000;
-                    }
-                    break;
-                case 230129646:
-                    if (label.equals("_$!<Other>!$_")) {
-                        var10000 = 7;
-                        return var10000;
-                    }
-                    break;
-                case 242877679:
-                    if (label.equals("_$!<Work>!$_")) {
-                        var10000 = 5;
-                        return var10000;
-                    }
-                    break;
-                case 370755079:
-                    if (label.equals("_$!<Profile>!$_")) {
-                        var10000 = 3;
-                        return var10000;
-                    }
-                    break;
-                case 1408787776:
-                    if (label.equals("_$!<Ftp>!$_")) {
-                        var10000 = 6;
-                        return var10000;
-                    }
-                    break;
-                case 1471867215:
-                    if (label.equals("_$!<Custom>!$_")) {
-                        var10000 = 0;
-                        return var10000;
-                    }
-            }
+        switch (label != null ? label : "") {
+            case HOMEPAGE:
+                var10000 = Website.TYPE_HOMEPAGE;
+                break;
+            case BLOG:
+                var10000 = Website.TYPE_BLOG;
+                break;
+            case HOME:
+                var10000 = Website.TYPE_HOME;
+                break;
+            case OTHER:
+                var10000 = Website.TYPE_OTHER;
+                break;
+            case WORK:
+                var10000 = Website.TYPE_WORK;
+                break;
+            case PROFILE:
+                var10000 = Website.TYPE_PROFILE;
+                break;
+            case FTP:
+                var10000 = Website.TYPE_FTP;
+                break;
+            case CUSTOM:
+            default:
+                var10000 = Website.TYPE_CUSTOM;
+                break;
         }
-
-        var10000 = 0;
         return var10000;
     }
 
-    @NotNull
-    public static String getUrlLabel(int type) {
+    static String getUrlLabel(int type) {
         String var10000;
         switch (type) {
-            case 0:
-                var10000 = "_$!<Custom>!$_";
+            case Website.TYPE_CUSTOM:
+                var10000 = CUSTOM;
                 break;
-            case 1:
-                var10000 = "_$!<HomePage>!$_";
+            case Website.TYPE_HOMEPAGE:
+                var10000 = HOMEPAGE;
                 break;
-            case 2:
-                var10000 = "_$!<Blog>!$_";
+            case Website.TYPE_BLOG:
+                var10000 = BLOG;
                 break;
-            case 3:
-                var10000 = "_$!<Profile>!$_";
+            case Website.TYPE_PROFILE:
+                var10000 = PROFILE;
                 break;
-            case 4:
-                var10000 = "_$!<Home>!$_";
+            case Website.TYPE_HOME:
+                var10000 = HOME;
                 break;
-            case 5:
-                var10000 = "_$!<Work>!$_";
+            case Website.TYPE_WORK:
+                var10000 = WORK;
                 break;
-            case 6:
-                var10000 = "_$!<Ftp>!$_";
+            case Website.TYPE_FTP:
+                var10000 = FTP;
                 break;
-            case 7:
-                var10000 = "_$!<Other>!$_";
+            case Website.TYPE_OTHER:
+                var10000 = OTHER;
                 break;
             default:
-                var10000 = "自定义";
+                var10000 = LABEL_DEFULT;
         }
 
         return var10000;
     }
 
-    public static int getEmailType(@Nullable String label) {
+    static int getEmailType(String label) {
         byte var10000;
-        if (label != null) {
-            switch (label.hashCode()) {
-                case -278160451:
-                    if (label.equals("_$!<Home>!$_")) {
-                        var10000 = 1;
-                        return var10000;
-                    }
-                    break;
-                case 230129646:
-                    if (label.equals("_$!<Other>!$_")) {
-                        var10000 = 3;
-                        return var10000;
-                    }
-                    break;
-                case 242877679:
-                    if (label.equals("_$!<Work>!$_")) {
-                        var10000 = 2;
-                        return var10000;
-                    }
-                    break;
-                case 932638208:
-                    if (label.equals("_$!<Mobile>!$_")) {
-                        var10000 = 4;
-                        return var10000;
-                    }
-                    break;
-                case 1471867215:
-                    if (label.equals("_$!<Custom>!$_")) {
-                        var10000 = 0;
-                        return var10000;
-                    }
-            }
+        switch (label != null ? label : "") {
+            case HOME:
+                var10000 = Email.TYPE_HOME;
+                break;
+            case OTHER:
+                var10000 = Email.TYPE_OTHER;
+                break;
+            case WORK:
+                var10000 = Email.TYPE_WORK;
+                break;
+            case MOBILE:
+                var10000 = Email.TYPE_MOBILE;
+                break;
+            case CUSTOM:
+            default:
+                var10000 = Email.TYPE_CUSTOM;
+                break;
         }
-
-        var10000 = 0;
         return var10000;
     }
 
-    @NotNull
-    public static String getEmailLabel(int type) {
+    static String getEmailLabel(int type) {
         String var10000;
         switch (type) {
-            case 0:
-                var10000 = "_$!<Custom>!$_";
+            case Email.TYPE_CUSTOM:
+                var10000 = CUSTOM;
                 break;
-            case 1:
-                var10000 = "_$!<Home>!$_";
+            case Email.TYPE_HOME:
+                var10000 = HOME;
                 break;
-            case 2:
-                var10000 = "_$!<Work>!$_";
+            case Email.TYPE_WORK:
+                var10000 = WORK;
                 break;
-            case 3:
-                var10000 = "_$!<Other>!$_";
+            case Email.TYPE_OTHER:
+                var10000 = OTHER;
                 break;
-            case 4:
-                var10000 = "_$!<Mobile>!$_";
+            case Email.TYPE_MOBILE:
+                var10000 = MOBILE;
                 break;
             default:
-                var10000 = "自定义";
+                var10000 = LABEL_DEFULT;
         }
 
         return var10000;
     }
 
-    public static int getEventType(@Nullable String label) {
+    static int getEventType(String label) {
         byte var10000;
-        if (label != null) {
-            switch (label.hashCode()) {
-                case -347166117:
-                    if (label.equals("_$!<Birthday>!$_")) {
-                        var10000 = 3;
-                        return var10000;
-                    }
-                    break;
-                case 230129646:
-                    if (label.equals("_$!<Other>!$_")) {
-                        var10000 = 2;
-                        return var10000;
-                    }
-                    break;
-                case 1150238830:
-                    if (label.equals("_$!<Anniversary>!$_")) {
-                        var10000 = 1;
-                        return var10000;
-                    }
-                    break;
-                case 1471867215:
-                    if (label.equals("_$!<Custom>!$_")) {
-                        var10000 = 0;
-                        return var10000;
-                    }
-            }
+        switch (label != null ? label : "") {
+            case BIRTHDAY:
+                var10000 = Event.TYPE_BIRTHDAY;
+                break;
+            case OTHER:
+                var10000 = Event.TYPE_OTHER;
+                break;
+            case ANNIVERSARY:
+                var10000 = Event.TYPE_ANNIVERSARY;
+                break;
+            case CUSTOM:
+            default:
+                var10000 = Event.TYPE_CUSTOM;
         }
-
-        var10000 = 0;
         return var10000;
     }
 
-    @NotNull
-    public static String getEventLabel(int type) {
+    static String getEventLabel(int type) {
         String var10000;
         switch (type) {
-            case 0:
-                var10000 = "_$!<Custom>!$_";
+            case Event.TYPE_CUSTOM:
+                var10000 = CUSTOM;
                 break;
-            case 1:
-                var10000 = "_$!<Anniversary>!$_";
+            case Event.TYPE_ANNIVERSARY:
+                var10000 = ANNIVERSARY;
                 break;
-            case 2:
-                var10000 = "_$!<Other>!$_";
+            case Event.TYPE_OTHER:
+                var10000 = OTHER;
                 break;
-            case 3:
-                var10000 = "_$!<Birthday>!$_";
+            case Event.TYPE_BIRTHDAY:
+                var10000 = BIRTHDAY;
                 break;
             default:
-                var10000 = "自定义";
+                var10000 = LABEL_DEFULT;
         }
-
         return var10000;
     }
 }
