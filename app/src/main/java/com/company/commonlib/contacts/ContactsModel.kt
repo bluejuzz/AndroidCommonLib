@@ -93,7 +93,7 @@ class ContactsModel : BaseViewModel() {
             val response: ContactsBackupBean? = GsonUtils.fromJson(inputStream?.reader(), ContactsBackupBean::class.java)
             val b = ContactsUtils.writeContacts(response)
             writeContactsComplete.postValue(b)
-        }
+        }.start()
         return this.writeContactsComplete
     }
 
