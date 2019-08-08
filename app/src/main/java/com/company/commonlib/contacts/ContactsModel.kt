@@ -6,7 +6,13 @@ import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.Utils
 import com.company.commonlib.contacts.java.ContactsBackupBean
 import com.company.commonlib.contacts.java.ContactsUtils
+import com.company.commonlib.contacts.kotlin.ContactBackupResponse
+import com.company.commonlib.contacts.kotlin.ContactBackupUtils
 import com.company.commonlibrary.base.BaseViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import java.io.InputStream
 import kotlin.concurrent.thread
 
@@ -23,7 +29,7 @@ class ContactsModel : BaseViewModel() {
     fun readContacts(): MutableLiveData<List<ContactBean>> {
         if (!::contacts.isInitialized) contacts = MutableLiveData()
 
-        thread {
+        /*thread {
             val phones: MutableList<ContactBean> = mutableListOf()
             val response = ContactsUtils.readContacts()
             response?.contacts?.forEach { contact ->
@@ -40,13 +46,14 @@ class ContactsModel : BaseViewModel() {
                 phones.add(contactBean)
             }
             contacts.postValue(phones)
-        }.start()
+        }.start()*/
 
-        /*GlobalScope.launch(Dispatchers.IO) {
+        GlobalScope.launch(Dispatchers.IO) {
             val deferred = GlobalScope.async {
                 return@async ContactBackupUtils(Utils.getApp()).readContacts()
             }
             val response: ContactBackupResponse? = deferred.await()
+            val phones: MutableList<ContactBean> = mutableListOf()
             response?.contacts?.forEach { contact ->
                 val phoneNumbers: List<ContactBackupResponse.ContactsBean.PhoneNumbersBean>? = contact.phoneNumbers
                 val name: String? = contact.displayName
@@ -61,7 +68,7 @@ class ContactsModel : BaseViewModel() {
                 phones.add(contactBean)
             }
             contacts.postValue(phones)
-        }*/
+        }
         return contacts
     }
 

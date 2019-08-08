@@ -29,8 +29,7 @@ class ContactsTestActivity : BaseActivity<ContactsModel>() {
             val imageView = helper.getView<ImageView>(R.id.contact_avatar)
             try {
                 val decode = Base64.decode(item.avatar, Base64.DEFAULT)
-                val bitmap: Bitmap? = ImageUtils.bytes2Bitmap(decode)
-                Glide.with(this@ContactsTestActivity).load(bitmap).error(R.mipmap.avatar_def).into(imageView)
+                Glide.with(this@ContactsTestActivity).load(decode).error(R.mipmap.avatar_def).into(imageView)
             } catch (e: Exception) {
                 Glide.with(this@ContactsTestActivity).load(R.mipmap.avatar_def).error(R.mipmap.avatar_def).into(imageView)
             }
