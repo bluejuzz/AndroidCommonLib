@@ -11,6 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.ImageUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.BaseRequestOptions
+import com.bumptech.glide.request.RequestOptions
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.company.commonlib.R
@@ -27,11 +31,12 @@ class ContactsTestActivity : BaseActivity<ContactsModel>() {
         override fun convert(helper: BaseViewHolder, item: ContactBean) {
             helper.setText(R.id.contact_name, item.name + " : " + item.telPhone)
             val imageView = helper.getView<ImageView>(R.id.contact_avatar)
+            val bitmapTransform = RequestOptions.bitmapTransform(CircleCrop())
             try {
                 val decode = Base64.decode(item.avatar, Base64.DEFAULT)
-                Glide.with(this@ContactsTestActivity).load(decode).error(R.mipmap.avatar_def).into(imageView)
+                Glide.with(this@ContactsTestActivity).load(decode).error(R.mipmap.avatar_def).apply(bitmapTransform).into(imageView)
             } catch (e: Exception) {
-                Glide.with(this@ContactsTestActivity).load(R.mipmap.avatar_def).error(R.mipmap.avatar_def).into(imageView)
+                Glide.with(this@ContactsTestActivity).load(R.mipmap.avatar_def).apply(bitmapTransform).error(R.mipmap.avatar_def).into(imageView)
             }
         }
     }
