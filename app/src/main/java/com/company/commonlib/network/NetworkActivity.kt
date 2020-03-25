@@ -31,11 +31,24 @@ class NetworkActivity : BaseActivity<BaseHttpModel>() {
 
         http_post.setOnClickListener {
             showLoading("加载中")
-            val requestBody = mViewModel.getRequestBody(RequestEntity<Map<String, Any>>(hashMapOf("phone" to 18279727279L)))
+           /* val requestBody = mViewModel.getRequestBody(RequestEntity<Map<String, Any>>(hashMapOf("phone" to 18279727279L)))
             mViewModel.post("https://http.aismono.net/mono-biz-app/educationclass/getCardList", requestBody)
                     .observe(this, object : HttpObserver<AismonoResponse<List<MyCardData.CardBean>>>() {
                         override fun onSuccess(response: AismonoResponse<List<MyCardData.CardBean>>) {
                             showMessage(GsonUtils.toJson(response))
+                        }
+
+                        override fun onFinish() {
+                            hideLoading()
+                        }
+
+                    })*/
+
+            val requestBody = mViewModel.getRequestBody(hashMapOf("username" to "946484","password" to "hsbdn"))
+            mViewModel.post("http://qing.wedotop.com/api/agent.admin/login", requestBody)
+                    .observe(this, object : HttpObserver<String>() {
+                        override fun onSuccess(response: String) {
+                            showMessage(response)
                         }
 
                         override fun onFinish() {

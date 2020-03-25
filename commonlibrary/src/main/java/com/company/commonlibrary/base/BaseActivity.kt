@@ -7,6 +7,7 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.MainThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.blankj.utilcode.util.BarUtils
 import com.company.commonlibrary.util.RxLifecycleUtils
@@ -53,7 +54,7 @@ abstract class BaseActivity<M : BaseViewModel> : AppCompatActivity(), IActivity 
         setContentView(layoutId)
         viewModelClass = getT1(this, 0)
         if (viewModelClass != null) {
-            mViewModel = ViewModelProviders.of(this).get(viewModelClass!!)
+            mViewModel = ViewModelProvider.AndroidViewModelFactory(application).create(viewModelClass!!)
         }
         initView()
         initData()

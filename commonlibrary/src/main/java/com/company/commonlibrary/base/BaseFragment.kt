@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 
 import com.company.commonlibrary.util.RxLifecycleUtils
@@ -54,7 +55,7 @@ abstract class BaseFragment<M : BaseViewModel> : Fragment(), IFragment {
         super.onViewCreated(view, savedInstanceState)
         viewModelClass = getT1(this, 0)
         if (viewModelClass != null) {
-            mViewModel = ViewModelProviders.of(this).get(viewModelClass!!)
+            mViewModel = ViewModelProvider.AndroidViewModelFactory(activity!!.application).create(viewModelClass!!)
         }
         initView(view)
         initData()

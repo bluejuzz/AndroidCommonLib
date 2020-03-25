@@ -27,13 +27,13 @@ import org.reactivestreams.Subscription
  * @date 2019/7/6
  * @des
  */
-class MainActivity : BaseActivity<BaseHttpModel>() {
+class MainActivity : BaseActivity<BaseHttpModel>(), NetworkChangeUtils.NetworkChangeListener {
 
     override val layoutId = R.layout.activity_main
 
-    @SuppressLint("AutoDispose")
     override fun initView() {
-        findViewById<View>(R.id.test_http).setOnClickListener {
+        NetworkChangeUtils.registerListener(this)
+        test_http.setOnClickListener {
             NetworkActivity.starter(this)
         }
         test_camerax.setOnClickListener {
@@ -49,8 +49,13 @@ class MainActivity : BaseActivity<BaseHttpModel>() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         NetworkChangeUtils.unRegisterListener()
+        super.onDestroy()
     }
+
+    override fun callback(isConnected: Boolean) {
+        showMessage("网络变化，是否有网络连接：$isConnected")
+    }
+
 }
 
