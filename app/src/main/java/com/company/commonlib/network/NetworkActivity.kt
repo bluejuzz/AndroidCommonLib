@@ -31,24 +31,11 @@ class NetworkActivity : BaseActivity<BaseHttpModel>() {
 
         http_post.setOnClickListener {
             showLoading("加载中")
-           /* val requestBody = mViewModel.getRequestBody(RequestEntity<Map<String, Any>>(hashMapOf("phone" to 18279727279L)))
+            val requestBody = mViewModel.getRequestBody(RequestEntity<Map<String, Any>>(hashMapOf("phone" to 18279727279L)))
             mViewModel.post("https://http.aismono.net/mono-biz-app/educationclass/getCardList", requestBody)
                     .observe(this, object : HttpObserver<AismonoResponse<List<MyCardData.CardBean>>>() {
                         override fun onSuccess(response: AismonoResponse<List<MyCardData.CardBean>>) {
                             showMessage(GsonUtils.toJson(response))
-                        }
-
-                        override fun onFinish() {
-                            hideLoading()
-                        }
-
-                    })*/
-
-            val requestBody = mViewModel.getRequestBody(hashMapOf("username" to "946484","password" to "hsbdn"))
-            mViewModel.post("http://qing.wedotop.com/api/agent.admin/login", requestBody)
-                    .observe(this, object : HttpObserver<String>() {
-                        override fun onSuccess(response: String) {
-                            showMessage(response)
                         }
 
                         override fun onFinish() {
@@ -77,7 +64,7 @@ class NetworkActivity : BaseActivity<BaseHttpModel>() {
                     .request(android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     .subscribe {
                         if (it) {
-                            mViewModel.download("https://m.mc.cn/Mc_V2.7.9.apk", CommonConstants.FilePath.PATH_CACHE + "Mc_V2.7.9.1.apk", object : DownloadListener {
+                            mViewModel.download("https://m.mc.cn/Mc_V3.0.3.apk", CommonConstants.FilePath.PATH_CACHE + System.currentTimeMillis() + ".apk", object : DownloadListener {
                                 override fun onStartDownload() {
                                     http_download.text = "开始下载"
                                     http_download.isEnabled = false
